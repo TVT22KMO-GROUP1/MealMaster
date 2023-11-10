@@ -1,85 +1,83 @@
-import { useNavigation } from '@react-navigation/core'
-import React, { useEffect, useState } from 'react'
-import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
-import { auth } from '../firebase'
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { useNavigation } from '@react-navigation/core';
+import React, { useState } from 'react';
+import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
+
 
 const LoginScreen = () => {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loginSuccess, setLoginSuccess] = useState(false);
 
-  const navigation = useNavigation()
-
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(user => {
-      if (user) {
-        navigation.replace("Home")
-      }
-    })
-
-    return unsubscribe
-  }, [])
-
-  const handleSignUp = () => {
-    auth
-      .createUserWithEmailAndPassword(email, password)
-      .then(userCredentials => {
-        const user = userCredentials.user;
-        console.log('Registered with:', user.email);
-      })
-      .catch(error => alert(error.message))
-  }
+  const navigation = useNavigation();
+  const auth = getAuth();
 
   const handleLogin = () => {
-    auth
-      .signInWithEmailAndPassword(email, password)
-      .then(userCredentials => {
-        const user = userCredentials.user;
-        console.log('Logged in with:', user.email);
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        console.log(userCredential.user);
+        setLoginSuccess(true);
+        // Additional logic or navigation can be added here upon successful login
       })
-      .catch(error => alert(error.message))
-  }
+      .catch((error) => {
+        if (error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
+          console.log('Invalid credentials');
+        } else if (error.code === 'auth/too-many-requests') {
+          console.log('Too many attempts to login');
+        } else {
+          console.log(error.code + ' ' + error.message);
+        }
+      });
+  };
+
+  const handleRegister = () => {
+    createUserWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        console.log('User registered with:', userCredential.user.email);
+        setLoginSuccess(true);
+        // Additional logic or navigation can be added here upon successful registration
+      })
+      .catch((error) => {
+        console.log(error.code + ' ' + error.message);
+        // Handle registration error
+      });
+  };
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior="padding"
-    >
+    <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <View style={styles.inputContainer}>
         <TextInput
           placeholder="Email"
           value={email}
-          onChangeText={text => setEmail(text)}
+          onChangeText={(text) => setEmail(text)}
           style={styles.input}
         />
         <TextInput
           placeholder="Password"
           value={password}
-          onChangeText={text => setPassword(text)}
+          onChangeText={(text) => setPassword(text)}
           style={styles.input}
           secureTextEntry
         />
       </View>
 
       <View style={styles.buttonContainer}>
-        <TouchableOpacity
-          onPress={handleLogin}
-          style={styles.button}
-        >
+        <TouchableOpacity onPress={handleLogin} style={styles.button}>
           <Text style={styles.buttonText}>Login</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          onPress={handleSignUp}
-          style={[styles.button, styles.buttonOutline]}
-        >
+        <TouchableOpacity onPress={handleRegister} style={styles.buttonOutline}>
           <Text style={styles.buttonOutlineText}>Register</Text>
         </TouchableOpacity>
       </View>
-    </KeyboardAvoidingView>
-  )
-}
 
-export default LoginScreen
+      {loginSuccess && (
+        <Text style={styles.successMessage}>Action successful! Add your navigation logic here.</Text>
+      )}
+    </KeyboardAvoidingView>
+  );
+};
+
+export default LoginScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -88,7 +86,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   inputContainer: {
-    width: '80%'
+    width: '80%',
   },
   input: {
     backgroundColor: 'white',
@@ -109,12 +107,15 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 10,
     alignItems: 'center',
+    marginBottom: 10,
   },
   buttonOutline: {
     backgroundColor: 'white',
-    marginTop: 5,
     borderColor: '#0782F9',
     borderWidth: 2,
+    borderRadius: 10,
+    padding: 15,
+    alignItems: 'center',
   },
   buttonText: {
     color: 'white',
@@ -126,4 +127,8 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     fontSize: 16,
   },
-})
+  successMessage: {
+    color: 'green',
+    marginTop: 10,
+  },
+});
