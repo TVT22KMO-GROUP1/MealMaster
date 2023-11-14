@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
 
-
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -17,7 +16,9 @@ const LoginScreen = () => {
       .then((userCredential) => {
         console.log(userCredential.user);
         setLoginSuccess(true);
-        // Additional logic or navigation can be added here upon successful login
+
+        // Navigate to HomeScreen upon successful login
+        navigation.replace('Home');
       })
       .catch((error) => {
         if (error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
@@ -71,7 +72,7 @@ const LoginScreen = () => {
       </View>
 
       {loginSuccess && (
-        <Text style={styles.successMessage}>Action successful! Add your navigation logic here.</Text>
+        <Text style={styles.successMessage}>Action successful!</Text>
       )}
     </KeyboardAvoidingView>
   );
