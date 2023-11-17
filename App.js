@@ -1,15 +1,18 @@
-import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
+import { MaterialIcons } from '@expo/vector-icons';
 import LoginScreen from './Screens/LoginScreen';
 import HomeScreen from './Screens/HomeScreen';
 import Menulist from './Screens/MenuList'; 
-import Recipe from './Screens/Recipe'
-import GroceryList from './Screens/GroceryList'
-import { MaterialIcons } from '@expo/vector-icons';
+import Recipe from './Screens/Recipe';
+import GroceryList from './Screens/GroceryList';
+import { auth } from './firebase';
+import LogOut from './Components/LogOut';
+import TabNavigatorIcons from './Components/TabNavigatorIcons';
+
 
 //Näillä saa keltaiset varoituskset pois puhelimen ruudulta
 import { LogBox } from 'react-native';
@@ -18,37 +21,41 @@ LogBox.ignoreAllLogs();
 const Stack = createNativeStackNavigator();
 const Tab = createMaterialBottomTabNavigator();
 
-//Tällä hetkellä menee Recipe sivulle 
-const LogOutIcon = ({ navigation }) => (
-  <View>
-    <MaterialIcons
-      name="logout"
-      size={24}
-      color="black"
-      style={{ marginLeft: 10 }}
-      onPress={() => {
-        navigation.navigate('Recipe');
-        console.log("nappia painettu");
-      }}
-    />
-    <Text style={{ color: 'black' }}>Logout</Text>
-  </View>
-);
-
-const stackScreenOptions = ({ navigation }) => ({
-  headerTitle: 'Keijo',
+//Asetetaan käyttäjän sähköposti ja LogoOut näkyville
+const stackScreenOptions = () => {
+  const userEmail = auth.currentUser?.email || 'Guest';
+  return {
+  headerTitle: auth.currentUser?.email,
   headerLeft: () => null,
-  headerRight: () => <LogOutIcon navigation={navigation} />,
-});
+  headerRight: () => <LogOut />
+  }
+};
+
+const tabScreenOptions = {
+  tabBarIcon: ({ route, focused, color, size }) => {
+    return (
+      <TabNavigatorIcons
+        route={route}
+        focused={focused}
+        color={color}
+        size={24}
+      />
+    );
+  },
+};
 
 function TabNavigator() {
   return (
-    <Tab.Navigator>
+    <Tab.Navigator
+      initialRouteName='Home'
+      screenOptions={tabScreenOptions} 
+    >
       <Tab.Screen name='Home' component={HomeScreen} />
       <Tab.Screen name='Menu' component={Menulist} />
       <Tab.Screen name='Recipe' component={Recipe} />
+      <Tab.Screen name='GroceryList' component={GroceryList} />
     </Tab.Navigator>
-  )
+  );
 }
 
 function StackNavigator() {
