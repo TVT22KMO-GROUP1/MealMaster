@@ -6,15 +6,6 @@ import { auth } from '../firebase'
 const HomeScreen = () => {
   
   const navigation = useNavigation()
-  
-  const handleSignOut = () => {
-    auth
-      .signOut()
-      .then(() => {
-        navigation.replace("Login")
-      })
-      .catch(error => alert(error.message))
-  }
 
   useEffect(() => {
     navigation.setOptions({
@@ -44,7 +35,6 @@ const HomeScreen = () => {
 
     <View style={styles.container}>
       <Text>HomeScreen</Text>
-	  <Text>Email: {auth.currentUser?.email}</Text>
       <Text style={styles.headerText}>Kategoriat</Text>
 
         <ScrollView contentContainerStyle={styles.imageContainer}>
@@ -56,13 +46,6 @@ const HomeScreen = () => {
             </TouchableOpacity>
           ))}
         </ScrollView>
-		<TouchableOpacity
-        onPress={handleSignOut}
-        style={styles.button}
-      >
-        <Text style={styles.buttonText}>Sign out</Text>
-      </TouchableOpacity>
-
     </View> 
   )
 }
