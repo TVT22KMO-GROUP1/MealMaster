@@ -1,14 +1,17 @@
 import { View, Text, StyleSheet, Button } from 'react-native'
 import React from 'react'
-import { useNavigation } from '@react-navigation/core'
+import { useNavigation , useRoute } from '@react-navigation/core'
 
 const MenuList = () => {
   const navigation = useNavigation()
+  const route = useRoute()
+  const { selectedCategory } = route.params
 
   return (
     <View style={styles.container}>
       <Text>Toka sivu</Text>
       <Text style={styles.headerText}>Ateriat</Text>
+      <Text style={styles.headerText}>{selectedCategory}</Text>
       <Button
         title='HomeScreen button'
         onPress={() => navigation.navigate('Home')} />
@@ -29,3 +32,4 @@ const styles = StyleSheet.create({
     margin: 20
   },
 })
+
