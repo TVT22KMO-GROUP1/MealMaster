@@ -30,7 +30,7 @@ const MenuList = () => {
 
   const handleReceiptPress = () => {
     if (receiptName) {
-      navigation.navigate('Recipe', { receiptName });
+      navigation.navigate('Recipe', { receiptName, selectedCategory });
     }
   };
 
