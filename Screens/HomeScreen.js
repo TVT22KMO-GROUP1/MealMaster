@@ -13,8 +13,9 @@ const HomeScreen = () => {
     });
   }, []);
 
-  const navigateToMenuList = () => {
-    navigation.navigate('Menu');
+  const navigateToMenuList = (selectedCategory) => {
+    navigation.navigate('Menu', { selectedCategory});
+    console.log(selectedCategory)
   };
 
   const images = [
@@ -36,11 +37,9 @@ const HomeScreen = () => {
     <View style={styles.container}>
       <Text>HomeScreen</Text>
       <Text style={styles.headerText}>Kategoriat</Text>
-
         <ScrollView contentContainerStyle={styles.imageContainer}>
-
           {images.map((item, index) => (
-             <TouchableOpacity key={index} onPress={navigateToMenuList}>
+             <TouchableOpacity key={index} onPress={() => navigateToMenuList(item.text)}>
               <Image source={item.image} style={[styles.image, { alignSelf: 'center' }]} />
               <Text style={styles.imageText}>{item.text}</Text>
             </TouchableOpacity>
