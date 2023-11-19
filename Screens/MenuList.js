@@ -1,7 +1,6 @@
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useNavigation, useRoute } from '@react-navigation/core';
-import { firestore } from '../firebase';
 
 const MenuList = () => {
   const navigation = useNavigation();
@@ -24,28 +23,34 @@ const MenuList = () => {
     };
 
     fetchData();
-  }, []);
+  }, [selectedCategory]);
 
-  const receiptName = menuData ? Object.keys(menuData.Reseptit)[0] : null;
+  const receiptNames = menuData ? Object.keys(menuData.Reseptit) : [];
 
-  const handleReceiptPress = () => {
+  const handleReceiptPress = (receiptName) => {
     if (receiptName) {
-      navigation.navigate('Recipe', { receiptName, selectedCategory });
+      navigation.navigate('Recipe', { receiptName: receiptName, selectedCategory: selectedCategory });
     }
   };
+
 
   return (
     <View style={styles.container}>
       <Text style={styles.headerText}>Menu Data</Text>
-      <View style={styles.contentContainer}>
-        {receiptName ? (
-          <TouchableOpacity onPress={handleReceiptPress}>
-            <Text>{receiptName}</Text>
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        {receiptNames.map((receiptName, index) => (
+          <TouchableOpacity
+            key={index}
+            onPress={() => handleReceiptPress(receiptName)}
+          >
+            <View key={index} style={styles.receiptContainer}>
+              <Text>{receiptName}</Text>
+              {}
+              <Image source={{ uri: menuData.Reseptit[receiptName].Kuva }} style={styles.imageStyle} />
+            </View>
           </TouchableOpacity>
-        ) : (
-          <Text>Loading...</Text>
-        )}
-      </View>
+        ))}
+      </ScrollView>
     </View>
   );
 };
@@ -66,9 +71,19 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 30,
   },
-  contentContainer: {
-    flex: 1,
+  scrollContent: {
+    flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
-  }
+  },
+  receiptContainer: {
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  imageStyle: {
+    width: 200,
+    height: 200,
+    resizeMode: 'cover',
+  },
 });
+
