@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, ScrollView } from 'react-native'
+import { View, Text, StyleSheet, ScrollView, Image } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { useNavigation } from '@react-navigation/core'
 
@@ -41,12 +41,18 @@ useEffect(() => {
 
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.headerText}>{receiptName}</Text>
-      {instructions.map((instruction, index) => (
-        <Text style={styles.instructionsText} key={index}>{instruction}</Text>
-      ))}
-      <View style = {styles.ingredientsText}>{ingredientList}</View>
+    <ScrollView >
+      <View style={styles.container}>
+        <Text style={styles.headerText}>{receiptName}</Text>
+        <View style={styles.ingredientsContainer}>
+          <View>{ingredientList}</View>
+        </View>
+        {instructions.map((instruction, index) => (
+          <Text style={styles.instructionsText} key={index}>
+            {instruction}
+          </Text>
+        ))}
+      </View>
     </ScrollView>
   )
 }
@@ -55,27 +61,43 @@ export default Recipe
 
 const styles = StyleSheet.create({
   container: {
-    flexGrow: 1,
+    flex: 1,
     paddingVertical: 20,
-    alignItems:'flex-start'
+    marginLeft:8,
+    marginRight:8,
+    
   },
   headerText: {
     //backgroundColor: 'cyan',
-    fontSize: 30,
+    fontSize: 36,
     marginBottom: 8,
     marginTop:8,
-    textAlign:'center'
+    textAlign:'center',
+    borderWidth:2,
+
   },
   instructionsText: {
     fontSize:16,
     marginLeft:8,
     marginTop: 4,
     marginBottom:8,
+   
   },
   ingredientsText :{
-    flexDirection:'column',
-    marginLeft:40,
-    marginTop:16,
+    fontSize:24,
+    borderBottomWidth: 1,
+    borderColor: 'lightgray',
+    paddingVertical: 10,
     
-  }
+   
+    
+  },
+  ingredientsContainer: {
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+
+    borderBottomWidth: 1,
+    borderColor: 'lightgray',
+    paddingVertical: 10,
+  },
 })
