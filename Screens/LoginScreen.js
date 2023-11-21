@@ -1,12 +1,13 @@
 import { useNavigation } from '@react-navigation/core';
 import React, { useState } from 'react';
-import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View, Platform } from 'react-native';
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loginSuccess, setLoginSuccess] = useState(false);
+  const [error, setError] = useState(null);
 
   const navigation = useNavigation();
   const auth = getAuth();
@@ -21,13 +22,18 @@ const LoginScreen = () => {
         navigation.replace('Home');
       })
       .catch((error) => {
-        if (error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
-          console.log('Invalid credentials');
+        if (error.code === 'auth/wrong-password' || error.code === 'auth/invalid-login-credentials' || error.code === 'auth/user-not-found') {
+          setError('Invalid credentials');
         } else if (error.code === 'auth/too-many-requests') {
-          console.log('Too many attempts to login');
+          setError('Too many attempts to login');
         } else {
           console.log(error.code + ' ' + error.message);
         }
+
+        // Display error for 5 seconds and then clear it
+        setTimeout(() => {
+          setError(null);
+        }, 5000);
       });
   };
 
@@ -39,8 +45,18 @@ const LoginScreen = () => {
         // Additional logic or navigation can be added here upon successful registration
       })
       .catch((error) => {
-        console.log(error.code + ' ' + error.message);
-        // Handle registration error
+        if (error.code === 'auth/email-already-in-use') {
+          setError('This email is already taken');
+        } else if (error.code === 'auth/weak-password') {
+          setError('Password has to be at least 6 figures long');
+        } else {
+          console.log(error.code + ' ' + error.message);
+        }
+
+        // Display error for 5 seconds and then clear it
+        setTimeout(() => {
+          setError(null);
+        }, 4000);
       });
   };
 
@@ -70,6 +86,10 @@ const LoginScreen = () => {
           <Text style={styles.buttonOutlineText}>Register</Text>
         </TouchableOpacity>
       </View>
+
+      {error && (
+        <Text style={styles.errorMessage}>{error}</Text>
+      )}
 
       {loginSuccess && (
         <Text style={styles.successMessage}>Action successful!</Text>
@@ -130,6 +150,10 @@ const styles = StyleSheet.create({
   },
   successMessage: {
     color: 'green',
+    marginTop: 10,
+  },
+  errorMessage: {
+    color: 'red',
     marginTop: 10,
   },
 });

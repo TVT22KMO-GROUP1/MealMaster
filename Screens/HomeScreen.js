@@ -24,7 +24,7 @@ const HomeScreen = () => {
     { image: require('../assets/icon.png'), text: 'Nopeat eväät' },
     { image: require('../assets/favicon.png'), text: 'Opiskelijan unelma' },
     { image: require('../assets/icon.png'), text: 'Luxus-lounaat' },
-    { image: require('../assets/favicon.png'), text: 'Hirveetä paskaa' },
+    { image: require('../assets/favicon.png'), text: 'Satunnaiset' },
   ];
 
   //En tiedä tarvitaanko
