@@ -1,14 +1,20 @@
-import { View, Text, StyleSheet } from 'react-native'
-import React from 'react'
+//GroceryList.js
+import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { useNavigation, useRoute } from '@react-navigation/core';
 
-export default function GroceryList() {
+
+const GroceryList = () => {
+
   return (
     <View style={styles.container}>
       <Text>neljäs sivu</Text>
       <Text style={styles.headerText}>Ostoslista</Text>
     </View>
   )
-}
+} 
+
+export default GroceryList;
 
 const styles = StyleSheet.create({
   container: {
