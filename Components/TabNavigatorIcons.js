@@ -3,10 +3,11 @@ import React from 'react';
 import { MaterialIcons } from '@expo/vector-icons';
 
 const TabNavigatorIcons = ({ route, focused, color, size }) => {
+  console.log("tabNavi route= ",route)
   const iconMap = {
     Home: 'home',
     Menu: 'menu',
-    Recipe: 'receipt',
+    Favorites: 'favorite',
     GroceryList: 'shopping-cart',
   };
 

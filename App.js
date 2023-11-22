@@ -1,3 +1,4 @@
+//App.js
 import React from 'react';
 import { StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
@@ -9,6 +10,7 @@ import HomeScreen from './Screens/HomeScreen';
 import Menulist from './Screens/MenuList'; 
 import Recipe from './Screens/Recipe';
 import GroceryList from './Screens/GroceryList';
+import Favorites from './Screens/Favorites';
 import { auth } from './firebase';
 import LogOut from './Components/LogOut';
 import TabNavigatorIcons from './Components/TabNavigatorIcons';
@@ -25,34 +27,33 @@ const Tab = createMaterialBottomTabNavigator();
 const stackScreenOptions = () => {
   const userEmail = auth.currentUser?.email || 'Guest';
   return {
-  headerTitle: auth.currentUser?.email,
+  headerTitle: userEmail,
   headerLeft: () => null,
   headerRight: () => <LogOut />
   }
 };
 
-const tabScreenOptions = {
-  tabBarIcon: ({ route, focused, color, size }) => {
-    return (
-      <TabNavigatorIcons
-        route={route}
-        focused={focused}
-        color={color}
-        size={24}
-      />
-    );
-  },
-};
+//TabNavigatorin screenOptions
+const tabScreenOptions = ({ route }) => ({
+  tabBarIcon: ({ focused, color, size }) => (
+    <TabNavigatorIcons
+      route={route}
+      focused={focused}
+      color={color}
+      size={24}
+    />
+  ),
+});
 
 function TabNavigator() {
   return (
     <Tab.Navigator
-      initialRouteName='Home'
-      screenOptions={tabScreenOptions} 
+    initialRouteName='Home'
+    screenOptions={tabScreenOptions}
     >
       <Tab.Screen name='Home' component={HomeScreen} />
       <Tab.Screen name='Menu' component={Menulist} />
-      <Tab.Screen name='Recipe' component={Recipe} />
+      <Tab.Screen name='Favorites' component={Favorites} />
       <Tab.Screen name='GroceryList' component={GroceryList} />
     </Tab.Navigator>
   );
@@ -64,6 +65,7 @@ function StackNavigator() {
       <Stack.Screen options={{ headerShown: false }} name="Login" component={LoginScreen} />
       <Stack.Screen name='Home' component={TabNavigator} />
       <Stack.Screen name='Menu' component={Menulist} />
+      <Stack.Screen name='Recipe' component={Recipe} />
     </Stack.Navigator>
   )
 }
