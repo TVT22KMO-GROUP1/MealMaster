@@ -36,7 +36,7 @@ const MenuList = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.headerText}>Ateria</Text>
+      <Text style={styles.headerText}>Ateriat</Text>
       <ScrollView contentContainerStyle={styles.imageContainer}>
         {receiptNames.map((receiptName, index) => (
           <TouchableOpacity
