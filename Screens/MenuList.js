@@ -36,17 +36,19 @@ const MenuList = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.headerText}>Menu Data</Text>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
+      <Text style={styles.headerText}>Ateriat</Text>
+      <ScrollView contentContainerStyle={styles.imageContainer}>
         {receiptNames.map((receiptName, index) => (
           <TouchableOpacity
             key={index}
             onPress={() => handleReceiptPress(receiptName)}
           >
+            <Image
+              source={{ uri: menuData.Reseptit[receiptName].Kuva }}
+              style={styles.image} />
             <View key={index} style={styles.receiptContainer}>
               <Text>{receiptName}</Text>
-              {}
-              <Image source={{ uri: menuData.Reseptit[receiptName].Kuva }} style={styles.imageStyle} />
+              { }
             </View>
           </TouchableOpacity>
         ))}
@@ -63,15 +65,10 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'center'
   },
-  headerContainer: {
-    width: '100%',
-    paddingHorizontal: 20,
-    marginBottom: 20,
-  },
   headerText: {
     fontSize: 30,
   },
-  scrollContent: {
+  imageContainer: {
     flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
@@ -80,7 +77,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 20,
   },
-  imageStyle: {
+  image: {
     width: 200,
     height: 200,
     resizeMode: 'cover',
