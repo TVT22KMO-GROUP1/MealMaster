@@ -1,22 +1,43 @@
+//HomeScreen.js
 import { useNavigation } from '@react-navigation/core'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { StyleSheet, Text, TouchableOpacity, View, Image, ScrollView } from 'react-native'
-import { auth } from '../firebase'
 
 const HomeScreen = () => {
+
+  const [categories, setCategories] = useState([])
+  const [categoryData, setCategoryData] = useState(null);
   
   const navigation = useNavigation()
 
   useEffect(() => {
-    navigation.setOptions({
-      headerShown: false,
-    });
+    const fetchData = async () => {
+      try {
+        const url = 'https://meal-base-99bc5-default-rtdb.firebaseio.com/Kategoriat.json'
+        const response = await fetch(url);
+        const data = await response.json();
+        setCategoryData(data)
+        
+        // Suodatetaan kategorianimet... Onko turha???
+        const categoryArray = data ? Object.keys(data).map(category => category) : [];        
+        setCategories(categoryArray);
+
+        } catch (error) {
+        console.error('Error fetching data', error);
+      }
+    };
+
+    fetchData();
+    console.log("kategoriat ", categories)
   }, []);
+
+  const categoryNames = categoryData ? Object.keys(categoryData) : [];
 
   const navigateToMenuList = (selectedCategory) => {
     navigation.navigate('Menu', { selectedCategory});
-    console.log(selectedCategory)
+    console.log("selected category (HomeSreen) ",{selectedCategory})
   };
+
 
   const images = [
     { image: require('../assets/burger.png'), text: 'Amerikkalainen' },
@@ -32,16 +53,23 @@ const HomeScreen = () => {
     
   ]
 
-  return (
 
+  
+
+  return (
     <View style={styles.container}>
-      <Text>HomeScreen</Text>
       <Text style={styles.headerText}>Kategoriat</Text>
         <ScrollView contentContainerStyle={styles.imageContainer}>
-          {images.map((item, index) => (
-             <TouchableOpacity key={index} onPress={() => navigateToMenuList(item.text)}>
-              <Image source={item.image} style={[styles.image, { alignSelf: 'center' }]} />
-              <Text style={styles.imageText}>{item.text}</Text>
+        {categoryNames.map((category, index) => (
+          <TouchableOpacity 
+            key={index} 
+            onPress={() => navigateToMenuList(category)}
+            >
+               <Image
+              source={{ uri: categoryData[category].Kuva }}
+              style={[styles.image, { alignSelf: 'center' }]}
+            />
+            <Text style={styles.imageText}>{category}</Text>
             </TouchableOpacity>
           ))}
         </ScrollView>
@@ -65,15 +93,20 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    marginTop: 10
   },
   image: {
     //backgroundColor: 'cyan',
-    width: 100, 
-    height: 100, 
-    margin: 20, 
+    width: 130, 
+    height: 130, 
+    marginTop: 25,
+    marginBottom: 5,
+    marginLeft: 20,
+    marginRight: 20,
   },
   imageText: {
+    //backgroundColor: 'cyan',
     textAlign: 'center',
   },
    button: {
