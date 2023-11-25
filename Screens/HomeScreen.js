@@ -19,12 +19,12 @@ const HomeScreen = () => {
   };
 
   const images = [
-    { image: require('../assets/icon.png'), text: 'Amerikkalainen' },
-    { image: require('../assets/favicon.png'), text: 'Aasialainen' },
-    { image: require('../assets/icon.png'), text: 'Nopeat eväät' },
-    { image: require('../assets/favicon.png'), text: 'Opiskelijan unelma' },
-    { image: require('../assets/icon.png'), text: 'Luxus-lounaat' },
-    { image: require('../assets/favicon.png'), text: 'Satunnaiset' },
+    { image: require('../assets/burger.png'), text: 'Amerikkalainen' },
+    { image: require('../assets/aasia.png'), text: 'Aasialainen' },
+    { image: require('../assets/kolikot.png'), text: 'Edulliset' },
+    { image: require('../assets/kakku.png'), text: 'Jälkiruoka' },
+    { image: require('../assets/nopea.png'), text: 'Nopeat' },
+    { image: require('../assets/terveellinen.png'), text: 'Terveellinen' },
   ];
 
   //En tiedä tarvitaanko

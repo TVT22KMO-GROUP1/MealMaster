@@ -1,103 +1,108 @@
-import { View, Text, StyleSheet, ScrollView, Image } from 'react-native'
-import React, { useEffect, useState } from 'react'
-import { useNavigation } from '@react-navigation/core'
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 
-const Recipe = ({route}) => {
-const { receiptName} = route.params;
-const { selectedCategory } = route.params;
-const [ingredients, setIngredients] = useState([]);
-const [instructions, setInstructions] = useState([]);
+const Recipe = ({ route }) => {
+  const { receiptName, selectedCategory } = route.params || {};
+  const [ingredients, setIngredients] = useState([]);
+  const [instructions, setInstructions] = useState([]);
 
+  const ingredientList = Object.keys(ingredients).map((ingredient) => (
+    <Text style={styles.ingredientsText} key={ingredient}>{`${ingredient}: ${ingredients[ingredient]}`}</Text>
+  ));
 
+  useEffect(() => {
+    const fetchRecipeData = async () => {
+      try {
+        if (selectedCategory && receiptName) {
+          const url = `https://meal-base-99bc5-default-rtdb.firebaseio.com/Kategoriat/${selectedCategory}/Reseptit/${receiptName}/Ainekset.json`;
+          const response = await fetch(url);
+          const data = await response.json();
+          setIngredients(data);
+          console.log(url);
+          console.log('Fetched ingredients data:', data);
 
-const ingredientList = Object.keys(ingredients).map((ingredient) => (
-  <Text style={styles.ingredientsText} key={ingredient}>{`${ingredient}: ${ingredients[ingredient]}`}</Text>
-));
+          const instructionsUrl = `https://meal-base-99bc5-default-rtdb.firebaseio.com/Kategoriat/${selectedCategory}/Reseptit/${receiptName}/Ohje.json`;
+          const instructionsResponse = await fetch(instructionsUrl);
+          const instructionsData = await instructionsResponse.json();
+          setInstructions(instructionsData);
+          console.log(instructionsUrl);
+          console.log('Fetched guide data:', instructionsData);
+        } else {
+          console.warn('No category or receipt name selected.');
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
 
-useEffect(() => {
-  const fetchRecipeData = async () => {
-    try {
-      const url = `https://meal-base-99bc5-default-rtdb.firebaseio.com/Kategoriat/${selectedCategory}/Reseptit/${receiptName}/Ainekset.json`;
-      const response = await fetch(url);
-      const data = await response.json();
-      setIngredients(data);
-      console.log(url);
-      console.log('Fetched ingredients data:', data);
-
-      const instructionsUrl = `https://meal-base-99bc5-default-rtdb.firebaseio.com/Kategoriat/${selectedCategory}/Reseptit/${receiptName}/Ohje.json`;
-      const instructionsResponse = await fetch(instructionsUrl);
-      const instructionsData = await instructionsResponse.json();
-      setInstructions(instructionsData);
-      console.log(instructionsUrl);
-      console.log('Fetched guide data:', instructionsData);
-
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
-  };
-
-  fetchRecipeData();
-}, [receiptName]);
-
+    fetchRecipeData();
+  }, [receiptName, selectedCategory]);
 
   return (
-    <ScrollView >
-      <View style={styles.container}>
-        <Text style={styles.headerText}>{receiptName}</Text>
-        <View style={styles.ingredientsContainer}>
-          <View>{ingredientList}</View>
-        </View>
-        {instructions.map((instruction, index) => (
-          <Text style={styles.instructionsText} key={index}>
-            {instruction}
-          </Text>
-        ))}
-      </View>
+    <ScrollView contentContainerStyle={styles.container}>
+      {receiptName ? (
+        <>
+          <Text style={styles.headerText}>{receiptName}</Text>
+          <View style={styles.ingredientsContainer}>
+            <View>{ingredientList}</View>
+          </View>
+          {Array.isArray(instructions) && instructions.length > 0 ? (
+            instructions.map((instruction, index) => (
+              <Text style={styles.instructionsText} key={index}>
+                {instruction}
+              </Text>
+            ))
+          ) : (
+            <Text style={styles.noRecipeText}>No recipe selected.</Text>
+          )}
+        </>
+      ) : (
+        <Text style={styles.noRecipeText}>No recipe selected.</Text>
+      )}
     </ScrollView>
-  )
-}
-
-export default Recipe
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     paddingVertical: 20,
-    marginLeft:8,
-    marginRight:8,
-    
+    marginLeft: 8,
+    marginRight: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   headerText: {
-    //backgroundColor: 'cyan',
     fontSize: 36,
     marginBottom: 8,
-    marginTop:8,
-    textAlign:'center',
-    borderWidth:2,
-
+    marginTop: 8,
+    textAlign: 'center',
+    borderWidth: 2,
   },
   instructionsText: {
-    fontSize:16,
-    marginLeft:8,
+    fontSize: 16,
+    marginLeft: 8,
     marginTop: 4,
-    marginBottom:8,
-   
+    marginBottom: 8,
   },
-  ingredientsText :{
-    fontSize:24,
+  ingredientsText: {
+    fontSize: 24,
     borderBottomWidth: 1,
     borderColor: 'lightgray',
     paddingVertical: 10,
-    
-   
-    
   },
   ingredientsContainer: {
     flexDirection: 'column',
     justifyContent: 'space-between',
-
     borderBottomWidth: 1,
     borderColor: 'lightgray',
     paddingVertical: 10,
   },
-})
+  noRecipeText: {
+    fontSize: 18,
+    textAlign: 'center',
+    marginTop: 20,
+  },
+});
+
+export default Recipe;
