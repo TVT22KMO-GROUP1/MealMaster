@@ -7,7 +7,11 @@ const TabNavigatorIcons = ({ route, focused, color, size }) => {
   const iconMap = {
     Home: 'home',
     Menu: 'menu',
+
+    Recipe: 'receipt',  
+
     Favorites: 'favorite',
+
     GroceryList: 'shopping-cart',
   };
 

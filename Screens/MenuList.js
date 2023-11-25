@@ -1,22 +1,28 @@
-import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native';
 import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/core';
+import { MaterialIcons } from '@expo/vector-icons';
 
 const MenuList = () => {
   const navigation = useNavigation();
   const route = useRoute();
-  const { selectedCategory } = route.params;
+  const { selectedCategory } = route.params || { selectedCategory: null };
   const [menuData, setMenuData] = useState(null);
+  const [selectedRecipes, setSelectedRecipes] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const url = `https://meal-base-99bc5-default-rtdb.firebaseio.com/Kategoriat/${selectedCategory}.json`;
-        const response = await fetch(url);
-        const data = await response.json();
-        setMenuData(data);
-        console.log(url);
-        console.log('Fetched menu data:', data);
+        if (selectedCategory) {
+          const url = `https://meal-base-99bc5-default-rtdb.firebaseio.com/Kategoriat/${selectedCategory}.json`;
+          const response = await fetch(url);
+          const data = await response.json();
+          setMenuData(data);
+          console.log(url);
+          console.log('Fetched menu data:', data);
+        } else {
+          console.warn('No category selected.');
+        }
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -33,31 +39,40 @@ const MenuList = () => {
     }
   };
 
+  const handleAddToFavorites = (receiptName) => {
+    const newSelectedRecipes = [...selectedRecipes, receiptName];
+    setSelectedRecipes(newSelectedRecipes);
+    navigation.navigate('Favorites', { selectedRecipes: newSelectedRecipes });
+  };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.headerText}>Ateriat</Text>
-      <ScrollView contentContainerStyle={styles.imageContainer}>
-        {receiptNames.map((receiptName, index) => (
-          <TouchableOpacity
-            key={index}
-            onPress={() => handleReceiptPress(receiptName)}
-          >
-            <Image
-              source={{ uri: menuData.Reseptit[receiptName].Kuva }}
-              style={styles.image} />
-            <View key={index} style={styles.receiptContainer}>
-              <Text>{receiptName}</Text>
-              { }
-            </View>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
+      {selectedCategory ? (
+        <>
+          <Text style={styles.headerText}>Ateriat</Text>
+          <ScrollView contentContainerStyle={styles.imageContainer}>
+            {receiptNames.map((receiptName, index) => (
+              <TouchableOpacity key={index} onPress={() => handleReceiptPress(receiptName)}>
+                <Image source={{ uri: menuData.Reseptit[receiptName].Kuva }} style={styles.image} />
+                <View style={styles.receiptContainer}>
+                  <Text>{receiptName}</Text>
+                  <TouchableOpacity onPress={() => handleAddToFavorites(receiptName)}>
+                    <MaterialIcons name="favorite" size={24} color="red" />
+                  </TouchableOpacity>
+                </View>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+          {console.log('selectedRecipes in MenuList:', selectedRecipes)}
+        </>
+      ) : (
+        <View style={styles.noCategoryContainer}>
+          <Text style={styles.noCategoryText}>No category selected.</Text>
+        </View>
+      )}
     </View>
   );
 };
-
-export default MenuList;
 
 const styles = StyleSheet.create({
   container: {
@@ -82,5 +97,16 @@ const styles = StyleSheet.create({
     height: 200,
     resizeMode: 'cover',
   },
+  noCategoryContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  noCategoryText: {
+    fontSize: 18,
+  },
 });
+
+export default MenuList;
+
 
