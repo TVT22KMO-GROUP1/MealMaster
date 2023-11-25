@@ -47,19 +47,18 @@ const MenuList = () => {
 
   return (
     <View style={styles.container}>
-
       {selectedCategory ? (
         <>
-          <Text style={styles.headerText}>Menu Data</Text>
-          <ScrollView contentContainerStyle={styles.scrollContent}>
+          <Text style={styles.headerText}>Ateriat</Text>
+          <ScrollView contentContainerStyle={styles.imageContainer}>
             {receiptNames.map((receiptName, index) => (
               <TouchableOpacity key={index} onPress={() => handleReceiptPress(receiptName)}>
+                <Image source={{ uri: menuData.Reseptit[receiptName].Kuva }} style={styles.image} />
                 <View style={styles.receiptContainer}>
                   <Text>{receiptName}</Text>
                   <TouchableOpacity onPress={() => handleAddToFavorites(receiptName)}>
                     <MaterialIcons name="favorite" size={24} color="red" />
                   </TouchableOpacity>
-                  <Image source={{ uri: menuData.Reseptit[receiptName].Kuva }} style={styles.imageStyle} />
                 </View>
               </TouchableOpacity>
             ))}
@@ -73,65 +72,7 @@ const MenuList = () => {
       )}
     </View>
   );
-  };
-  
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      justifyContent: 'flex-start',
-      alignItems: 'center',
-    },
-    headerText: {
-      fontSize: 30,
-    },
-    scrollContent: {
-      flexGrow: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
-    receiptContainer: {
-      alignItems: 'center',
-      marginBottom: 20,
-    },
-    imageStyle: {
-      width: 200,
-      height: 200,
-      resizeMode: 'cover',
-    },
-    noCategoryContainer: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
-    noCategoryText: {
-      fontSize: 18,
-    },
-  });
-  
-  export default MenuList;
-
-      <Text style={styles.headerText}>Ateriat</Text>
-      <ScrollView contentContainerStyle={styles.imageContainer}>
-        {receiptNames.map((receiptName, index) => (
-          <TouchableOpacity
-            key={index}
-            onPress={() => handleReceiptPress(receiptName)}
-          >
-            <Image
-              source={{ uri: menuData.Reseptit[receiptName].Kuva }}
-              style={styles.image} />
-            <View key={index} style={styles.receiptContainer}>
-              <Text>{receiptName}</Text>
-              { }
-            </View>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
-    </View>
-  );
 };
-
-export default MenuList;
 
 const styles = StyleSheet.create({
   container: {
@@ -156,6 +97,16 @@ const styles = StyleSheet.create({
     height: 200,
     resizeMode: 'cover',
   },
+  noCategoryContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  noCategoryText: {
+    fontSize: 18,
+  },
 });
+
+export default MenuList;
 
 
