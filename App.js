@@ -15,6 +15,7 @@ import TabNavigatorIcons from './Components/TabNavigatorIcons';
 
 // Näillä saa keltaiset varoituskset pois puhelimen ruudulta
 import { LogBox } from 'react-native';
+import PlanMeal from './Screens/PlanMeal';
 LogBox.ignoreAllLogs();
 
 const Stack = createNativeStackNavigator();
@@ -43,13 +44,13 @@ function TabNavigatorComponent({ selectedRecipes }) {
         {() => <HomeScreen selectedRecipes={selectedRecipes} />}
       </Tab.Screen>
       <Tab.Screen name="Menu" component={MenuList} />
-      <Tab.Screen name="Recipe" component={Recipe} />
       <Tab.Screen name="GroceryList" component={GroceryList} />
       <Tab.Screen
         name="Favorites"
         component={Favorites}
         initialParams={{ selectedRecipes }}
       />
+      <Tab.Screen name="MealPlan" component={PlanMeal}/>
     </Tab.Navigator>
   );
 }
@@ -65,9 +66,12 @@ export default function App() {
           {() => <TabNavigatorComponent selectedRecipes={selectedRecipes} />}
         </Stack.Screen>
         <Stack.Screen name="Menu" component={MenuList} />
+        <Stack.Screen name= "Recipe" component={Recipe}/>
+        <Stack.Screen name= "PlanMeal" component={PlanMeal}/>
         <Stack.Screen name="Favorites">
           {() => <Favorites selectedRecipes={selectedRecipes} />}
         </Stack.Screen>
+        
       </Stack.Navigator>
     </NavigationContainer>
   );
