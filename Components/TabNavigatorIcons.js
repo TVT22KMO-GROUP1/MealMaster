@@ -6,13 +6,12 @@ const TabNavigatorIcons = ({ route, focused, color, size }) => {
   console.log("tabNavi route= ",route)
   const iconMap = {
     Home: 'home',
-    Menu: 'menu',
-
-    Recipe: 'receipt',  
+    Menu: 'menu', 
 
     Favorites: 'favorite',
 
     GroceryList: 'shopping-cart',
+    
   };
 
   const routeName = route?.name || '';
