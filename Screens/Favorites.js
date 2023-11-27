@@ -1,26 +1,75 @@
-import React, { useEffect } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { onValue, ref, remove } from 'firebase/database';
+import { auth, database } from '../firebase';
+import { MaterialIcons } from '@expo/vector-icons';
 
-export default function Favorites({ route }) {
-  const { selectedRecipes } = route.params;
+const Favorites = () => {
+  const [favoriteRecipes, setFavoriteRecipes] = useState([]);
 
   useEffect(() => {
-    console.log('Favorites component re-rendered with selectedRecipes:', selectedRecipes);
-  }, [selectedRecipes]);
+    const user = auth.currentUser;
+
+    if (!user) {
+      console.log('User is not logged in.');
+      return;
+    }
+
+    const userEmail = user.email;
+    const sanitizedEmail = userEmail.replace(/\./g, '_');
+    const favoritesPath = `kayttajat/${sanitizedEmail}/suosikit`;
+
+    const allFavoritesPath = `${favoritesPath}`;
+
+    onValue(ref(database, allFavoritesPath), (snapshot) => {
+      const data = snapshot.val();
+      setFavoriteRecipes(data ? Object.entries(data) : []);
+      console.log('Favorite recipes updated:', favoriteRecipes);
+    });
+  }, []);
+
+  const removeFromFavorites = (recipeName) => {
+    const user = auth.currentUser;
+
+    if (!user) {
+      console.log('User is not logged in.');
+      return;
+    }
+
+    const userEmail = user.email;
+    const sanitizedEmail = userEmail.replace(/\./g, '_');
+    const favoritesPath = `kayttajat/${sanitizedEmail}/suosikit`;
+    const recipePath = `${favoritesPath}/${recipeName}`;
+
+    remove(ref(database, recipePath))
+      .then(() => {
+        console.log('Recipe removed from favorites successfully.');
+        setFavoriteRecipes((prevRecipes) => prevRecipes.filter(([name]) => name !== recipeName));
+        // You can add any additional logic here if needed
+      })
+      .catch((error) => {
+        console.error('Error removing recipe from favorites:', error.message);
+      });
+  };
 
   return (
     <View style={styles.container}>
       <Text>Favorites</Text>
-      {selectedRecipes && selectedRecipes.length > 0 ? (
-        selectedRecipes.map((recipe, index) => (
-          <Text key={index}>{recipe}</Text>
+      {favoriteRecipes && favoriteRecipes.length > 0 ? (
+        favoriteRecipes.map(([recipeName, recipe], index) => (
+          <View key={index} style={styles.favoriteRecipeContainer}>
+            <Text style={styles.favoriteRecipeText}>{recipe.reseptiNimi}</Text>
+            <TouchableOpacity onPress={() => removeFromFavorites(recipeName)}>
+              <MaterialIcons name="cancel" size={24} color="red" />
+            </TouchableOpacity>
+          </View>
         ))
       ) : (
-        <Text>No favorites yet.</Text>
+        <Text style={styles.noFavoritesText}>No favorites yet.</Text>
       )}
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -28,8 +77,26 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  headerText: {
-    fontSize: 30,
-    margin: 20,
+  favoriteRecipeContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    borderWidth: 1,
+    paddingVertical: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 8,
+    marginBottom: 8,
+  },
+  favoriteRecipeText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    alignContent: 'stretch',
+  },
+  noFavoritesText: {
+    fontSize: 16,
+    marginTop: 20,
+    textAlign: 'center',
   },
 });
+
+export default Favorites;

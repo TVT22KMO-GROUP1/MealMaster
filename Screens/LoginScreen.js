@@ -1,6 +1,6 @@
-import { useNavigation } from '@react-navigation/core';
 import React, { useState } from 'react';
-import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View, Platform } from 'react-native';
+import { KeyboardAvoidingView, ImageBackground, StyleSheet, Text, TextInput, TouchableOpacity, View, Platform, StatusBar, SafeAreaView } from 'react-native';
+import { useNavigation } from '@react-navigation/core';
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
 
 const LoginScreen = () => {
@@ -61,40 +61,47 @@ const LoginScreen = () => {
   };
 
   return (
-    <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-      <View style={styles.inputContainer}>
-        <TextInput
-          placeholder="Email"
-          value={email}
-          onChangeText={(text) => setEmail(text)}
-          style={styles.input}
-        />
-        <TextInput
-          placeholder="Password"
-          value={password}
-          onChangeText={(text) => setPassword(text)}
-          style={styles.input}
-          secureTextEntry
-        />
-      </View>
+    <ImageBackground
+      source={require('../assets/ruokabg.png')}
+      style={styles.backgroundImage}
+      imageStyle={styles.backgroundImageStyle}
+    >
+      <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+        <StatusBar translucent backgroundColor="transparent" />
+        <View style={styles.inputContainer}>
+          <TextInput
+            placeholder="Email"
+            value={email}
+            onChangeText={(text) => setEmail(text)}
+            style={styles.input}
+          />
+          <TextInput
+            placeholder="Password"
+            value={password}
+            onChangeText={(text) => setPassword(text)}
+            style={styles.input}
+            secureTextEntry
+          />
+        </View>
 
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity onPress={handleLogin} style={styles.button}>
-          <Text style={styles.buttonText}>Login</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={handleRegister} style={styles.buttonOutline}>
-          <Text style={styles.buttonOutlineText}>Register</Text>
-        </TouchableOpacity>
-      </View>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity onPress={handleLogin} style={styles.button}>
+            <Text style={styles.buttonText}>Login</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleRegister} style={styles.buttonOutline}>
+            <Text style={styles.buttonOutlineText}>Register</Text>
+          </TouchableOpacity>
+        </View>
 
-      {error && (
-        <Text style={styles.errorMessage}>{error}</Text>
-      )}
+        {error && (
+          <Text style={styles.errorMessage}>{error}</Text>
+        )}
 
-      {loginSuccess && (
-        <Text style={styles.successMessage}>Action successful!</Text>
-      )}
-    </KeyboardAvoidingView>
+        {loginSuccess && (
+          <Text style={styles.successMessage}>Action successful!</Text>
+        )}
+      </KeyboardAvoidingView>
+    </ImageBackground>
   );
 };
 
@@ -105,6 +112,9 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
+    width: '100%', // Set the width to cover the entire screen
+    height: '100%', // Set the height to cover the entire screen
   },
   inputContainer: {
     width: '80%',
@@ -155,5 +165,15 @@ const styles = StyleSheet.create({
   errorMessage: {
     color: 'red',
     marginTop: 10,
+  },
+  backgroundImage: {
+    flex: 1,
+    resizeMode: 'cover',
+    justifyContent: 'flex-start', // Align to the top of the container
+    alignItems: 'center',
+  },
+  backgroundImageStyle: {
+    // Additional styling for the background image
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
 });

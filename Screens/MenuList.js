@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/core';
 import { MaterialIcons } from '@expo/vector-icons';
+import { auth, database } from '../firebase';
+import { ref, update, onValue, remove } from 'firebase/database';
 
 const MenuList = () => {
   const navigation = useNavigation();
@@ -9,6 +11,7 @@ const MenuList = () => {
   const { selectedCategory } = route.params || { selectedCategory: null };
   const [menuData, setMenuData] = useState(null);
   const [selectedRecipes, setSelectedRecipes] = useState([]);
+  const [isFavorite, setIsFavorite] = useState({});
 
   useEffect(() => {
     const fetchData = async () => {
@@ -31,6 +34,27 @@ const MenuList = () => {
     fetchData();
   }, [selectedCategory]);
 
+  useEffect(() => {
+    const user = auth.currentUser;
+
+    if (!user) {
+      console.log('User is not logged in.');
+      return;
+    }
+
+    const userEmail = user.email;
+    const sanitizedEmail = userEmail.replace(/\./g, '_');
+    const favoritesPath = `kayttajat/${sanitizedEmail}/suosikit`;
+
+    const allFavoritesPath = `${favoritesPath}`;
+
+    onValue(ref(database, allFavoritesPath), (snapshot) => {
+      const data = snapshot.val();
+      setIsFavorite(data || {});
+      console.log('Favorites updated:', data);
+    });
+  }, []);
+
   const receiptNames = menuData ? Object.keys(menuData.Reseptit) : [];
 
   const handleReceiptPress = (receiptName) => {
@@ -39,10 +63,51 @@ const MenuList = () => {
     }
   };
 
-  const handleAddToFavorites = (receiptName) => {
-    const newSelectedRecipes = [...selectedRecipes, receiptName];
-    setSelectedRecipes(newSelectedRecipes);
-    navigation.navigate('Favorites', { selectedRecipes: newSelectedRecipes });
+  const toggleFavorite = async (receiptName) => {
+    const user = auth.currentUser;
+
+    if (!user) {
+      console.log('User is not logged in.');
+      return;
+    }
+
+    const userEmail = user.email;
+    const sanitizedEmail = userEmail.replace(/\./g, '_');
+    const favoritesPath = `kayttajat/${sanitizedEmail}/suosikit`;
+    const recipePath = `${favoritesPath}/${receiptName}`;
+
+    if (isFavorite[receiptName]) {
+      // Remove from favorites
+      remove(ref(database, recipePath))
+        .then(() => {
+          console.log('Recipe removed from favorites successfully.');
+          setSelectedRecipes((prevRecipes) => prevRecipes.filter((name) => name !== receiptName));
+          setIsFavorite((prevFavorites) => {
+            const newFavorites = { ...prevFavorites };
+            delete newFavorites[receiptName];
+            return newFavorites;
+          });
+        })
+        .catch((error) => {
+          console.error('Error removing recipe from favorites:', error.message);
+        });
+    } else {
+      // Add to favorites
+      const favoriteData = {
+        reseptiNimi: receiptName,
+        // Add other relevant data about the favorite recipe if needed
+      };
+
+      update(ref(database, recipePath), favoriteData)
+        .then(() => {
+          console.log('Dish added to favorites successfully.');
+          setSelectedRecipes((prevRecipes) => [...prevRecipes, receiptName]);
+          setIsFavorite((prevFavorites) => ({ ...prevFavorites, [receiptName]: true }));
+        })
+        .catch((error) => {
+          console.error('Error adding dish to favorites:', error.message);
+        });
+    }
   };
 
   return (
@@ -56,8 +121,8 @@ const MenuList = () => {
                 <Image source={{ uri: menuData.Reseptit[receiptName].Kuva }} style={styles.image} />
                 <View style={styles.receiptContainer}>
                   <Text>{receiptName}</Text>
-                  <TouchableOpacity onPress={() => handleAddToFavorites(receiptName)}>
-                    <MaterialIcons name="favorite" size={24} color="red" />
+                  <TouchableOpacity onPress={() => toggleFavorite(receiptName)}>
+                    <MaterialIcons name="favorite" size={24} color={isFavorite[receiptName] ? 'red' : 'gray'} />
                   </TouchableOpacity>
                 </View>
               </TouchableOpacity>
@@ -78,7 +143,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'flex-start',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   headerText: {
     fontSize: 30,
@@ -89,6 +154,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   receiptContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 20,
   },
@@ -108,5 +175,3 @@ const styles = StyleSheet.create({
 });
 
 export default MenuList;
-
-
