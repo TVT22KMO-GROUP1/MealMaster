@@ -6,7 +6,6 @@ const TabNavigatorIcons = ({ route, focused, color, size }) => {
   console.log("tabNavi route= ",route)
   const iconMap = {
     Home: 'home',
-    Menu: 'menu', 
 
     Favorites: 'favorite',
 

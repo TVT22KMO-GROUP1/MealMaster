@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Button } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Button, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/core'
 import {Picker} from '@react-native-picker/picker';
 import { database, auth,  } from '../firebase';
@@ -8,6 +8,7 @@ import {ref, update, push} from 'firebase/database'
 const Recipe = ({ route }) => {
   const { receiptName } = route.params;
   const { selectedCategory } = route.params;
+  const { imageUri } = route.params;
   const navigation = useNavigation();
   const [ingredients, setIngredients] = useState([]);
   const [instructions, setInstructions] = useState([]);
@@ -103,6 +104,7 @@ const Recipe = ({ route }) => {
     <ScrollView>
       <View style={styles.container}>
         <Text style={styles.headerText}>{receiptName}</Text>
+        <Image source={{ uri: imageUri }} style={styles.recipeImage} />
         <View style={styles.ingredientsContainer}>
           <View>{ingredientList}</View>
         </View>
@@ -170,5 +172,16 @@ const styles = StyleSheet.create({
     width: '100%',
     marginBottom: 16,
     marginTop: 8,
+  },
+  recipeImage: {
+    width: '100%',
+    height: 300,
+    resizeMode: 'cover',
+    borderRadius: 4, 
+    shadowColor: '#fff',
+    shadowOffset: { width: 4, height: 2 },
+    shadowOpacity: 4,
+    shadowRadius: 4,
+    elevation: 5,
   },
 })

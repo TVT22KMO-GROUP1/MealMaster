@@ -57,9 +57,9 @@ const MenuList = () => {
 
   const receiptNames = menuData ? Object.keys(menuData.Reseptit) : [];
 
-  const handleReceiptPress = (receiptName) => {
+  const handleReceiptPress = (receiptName, imageUri) => {
     if (receiptName) {
-      navigation.navigate('Recipe', { receiptName: receiptName, selectedCategory: selectedCategory });
+      navigation.navigate('Recipe', { receiptName: receiptName, selectedCategory: selectedCategory, imageUri });
     }
   };
 
@@ -117,7 +117,7 @@ const MenuList = () => {
           <Text style={styles.headerText}>Ateriat</Text>
           <ScrollView contentContainerStyle={styles.imageContainer}>
             {receiptNames.map((receiptName, index) => (
-              <TouchableOpacity key={index} onPress={() => handleReceiptPress(receiptName)}>
+              <TouchableOpacity key={index} onPress={() => handleReceiptPress(receiptName, menuData.Reseptit[receiptName].Kuva)}>
                 <Image source={{ uri: menuData.Reseptit[receiptName].Kuva }} style={styles.image} />
                 <View style={styles.receiptContainer}>
                   <Text>{receiptName}</Text>

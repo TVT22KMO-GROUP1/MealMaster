@@ -1,7 +1,7 @@
 import { onValue, ref } from 'firebase/database';
 import { useEffect, useState } from 'react';
-import { ScrollView, View, Text, StyleSheet } from 'react-native';
-import { database, auth } from '../firebase';
+import { ScrollView, View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { database, auth, remove } from '../firebase';
 
 const PlanMeal = ({ route }) => {
   const [mealPlan, setMealPlan] = useState({});
@@ -28,6 +28,27 @@ const PlanMeal = ({ route }) => {
     });
   }, []); 
 
+  const removeMealPlanForDay = (day) => {
+    const user = auth.currentUser;
+
+    if (!user) {
+      console.log('Käyttäjä ei ole kirjautunut sisään.');
+      return;
+    }
+
+    const userEmail = user.email;
+    const sanitizedEmail = userEmail.replace(/\./g, '_');
+    const mealPlanPath = `kayttajat/${sanitizedEmail}/ateriasuunnitelma/${day}`;
+
+    remove(ref(database, mealPlanPath))
+      .then(() => {
+        console.log(`Ateriasuunnitelma poistettu päivältä ${day}`);
+      })
+      .catch((error) => {
+        console.error('Virhe poistettaessa ateriasuunnitelmaa:', error);
+      });
+  };
+
   return (
     <ScrollView>
     <View style={styles.container}>
@@ -42,6 +63,9 @@ const PlanMeal = ({ route }) => {
           {Object.keys(mealPlan[day] || {}).length === 0 && (
             <Text style={styles.recipeText}>Ei aterioita tälle päivälle</Text>
           )}
+      <TouchableOpacity onPress={() => removeMealPlanForDay(day)}>
+      <Text style={styles.removeButton}>Poista suunnitelma</Text>
+    </TouchableOpacity>
         </View>
       ))}
     </View>
@@ -63,11 +87,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginTop: 8,
     marginBottom: 8,
+   
   },
   dayText: {
     fontSize: 16,
     fontWeight: 'bold',
     alignContent: 'stretch',
+  },
+  removeButton: {
+    color: 'red',
+    marginTop: 16,
+    textDecorationLine: 'underline', 
   },
 });
 
