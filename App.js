@@ -43,7 +43,7 @@ function TabNavigatorComponent({ selectedRecipes }) {
       <Tab.Screen name="Home">
         {() => <HomeScreen selectedRecipes={selectedRecipes} />}
       </Tab.Screen>
-      <Tab.Screen name="Menu" component={MenuList} />
+      
       <Tab.Screen name="GroceryList" component={GroceryList} />
       <Tab.Screen
         name="Favorites"
