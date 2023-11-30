@@ -7,6 +7,7 @@ import LoginScreen from './Screens/LoginScreen';
 import MenuList from './Screens/MenuList';
 import HomeScreen from './Screens/HomeScreen';
 import Favorites from './Screens/Favorites';
+import Registration from './Screens/Registration';
 import Recipe from './Screens/Recipe';
 import GroceryList from './Screens/GroceryList';
 import { auth } from './firebase';
@@ -71,7 +72,7 @@ export default function App() {
         <Stack.Screen name="Favorites">
           {() => <Favorites selectedRecipes={selectedRecipes} />}
         </Stack.Screen>
-        
+        <Stack.Screen options = {{headerShown: false }} name="Registration" component={Registration} />
       </Stack.Navigator>
     </NavigationContainer>
   );

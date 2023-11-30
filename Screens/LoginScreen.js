@@ -60,6 +60,10 @@ const LoginScreen = () => {
       });
   };
 
+  const navigateToRegistration = () => {
+    navigation.navigate('Registration')
+  }
+
   return (
     <ImageBackground
       source={require('../assets/ruokabg.png')}
@@ -86,10 +90,10 @@ const LoginScreen = () => {
 
         <View style={styles.buttonContainer}>
           <TouchableOpacity onPress={handleLogin} style={styles.button}>
-            <Text style={styles.buttonText}>Login</Text>
+            <Text style={styles.buttonText}>Kirjaudu</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={handleRegister} style={styles.buttonOutline}>
-            <Text style={styles.buttonOutlineText}>Register</Text>
+          <TouchableOpacity onPress={navigateToRegistration} style={styles.buttonOutline}>
+            <Text style={styles.buttonOutlineText}>Uusi käyttäjä? Rekisteröi painamalla tästä</Text>
           </TouchableOpacity>
         </View>
 
