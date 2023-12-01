@@ -1,3 +1,4 @@
+//Favorite.js
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { onValue, ref, remove } from 'firebase/database';
@@ -24,7 +25,7 @@ const Favorites = () => {
     onValue(ref(database, allFavoritesPath), (snapshot) => {
       const data = snapshot.val();
       setFavoriteRecipes(data ? Object.entries(data) : []);
-      console.log('Favorite recipes updated:', favoriteRecipes);
+      //console.log('Favorite recipes updated:', favoriteRecipes);
     });
   }, []);
 
