@@ -64,7 +64,7 @@ export default function App() {
   const [selectedRecipes, setSelectedRecipes] = useState([]);
 
   return (
-    <>
+    <GroceryListProvider>
         <NavigationContainer>
       <Stack.Navigator screenOptions={stackScreenOptions}>
         <Stack.Screen options={{ headerShown: false }} name="Login" component={LoginScreen} />
@@ -80,22 +80,7 @@ export default function App() {
         <Stack.Screen options = {{headerShown: false }} name="Registration" component={Registration} />
       </Stack.Navigator>
     </NavigationContainer>
-    <GroceryListProvider>
-      <NavigationContainer>
-        <Stack.Navigator screenOptions={stackScreenOptions}>
-          <Stack.Screen options={{ headerShown: false }} name="Login" component={LoginScreen} />
-          <Stack.Screen name="Home">
-            {() => <TabNavigatorComponent selectedRecipes={selectedRecipes} />}
-          </Stack.Screen>
-          <Stack.Screen name="Menu" component={MenuList} />
-          <Stack.Screen name="Recipe" component={Recipe} />
-          <Stack.Screen name="Favorites">
-            {() => <Favorites selectedRecipes={selectedRecipes} />}
-          </Stack.Screen>
-        </Stack.Navigator>
-      </NavigationContainer>
     </GroceryListProvider>
-    </>
   );
 }
 
