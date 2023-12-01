@@ -1,9 +1,12 @@
+//Recipe.js
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Button, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/core'
 import {Picker} from '@react-native-picker/picker';
 import { database, auth,  } from '../firebase';
-import {ref, update, push} from 'firebase/database'
+import {ref, update } from 'firebase/database';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useGroceryList } from '../Components/GroceryListContext';
 
 const Recipe = ({ route }) => {
   const { receiptName } = route.params;
@@ -13,7 +16,7 @@ const Recipe = ({ route }) => {
   const [ingredients, setIngredients] = useState([]);
   const [instructions, setInstructions] = useState([]);
   const [selectedDay, setSelectedDay] = useState('Maanantai');
-
+  const { updateGroceryList } = useGroceryList();
 
   const [mealPlan, setMealPlan] = useState({ 
     Maanantai: [],
@@ -34,7 +37,9 @@ const Recipe = ({ route }) => {
     'Sunnuntai'];
 
   const ingredientList = Object.keys(ingredients).map((ingredient) => (
-    <Text style={styles.ingredientsText} key={ingredient}>{`${ingredient}: ${ingredients[ingredient]}`}</Text>
+    <Text style={styles.ingredientsText} key={ingredient}>
+      {`${ingredient}: ${ingredients[ingredient]}`}
+    </Text>
   ));
 
   useEffect(() => {
@@ -45,15 +50,15 @@ const Recipe = ({ route }) => {
           const response = await fetch(url);
           const data = await response.json();
           setIngredients(data);
-          console.log(url);
-          console.log('Fetched ingredients data:', data);
+          //console.log(url);
+          //console.log('Fetched ingredients data:', data);
 
           const instructionsUrl = `https://meal-base-99bc5-default-rtdb.firebaseio.com/Kategoriat/${selectedCategory}/Reseptit/${receiptName}/Ohje.json`;
           const instructionsResponse = await fetch(instructionsUrl);
           const instructionsData = await instructionsResponse.json();
           setInstructions(instructionsData);
-          console.log(instructionsUrl);
-          console.log('Fetched guide data:', instructionsData);
+          //console.log(instructionsUrl);
+          //console.log('Fetched guide data:', instructionsData);
         } else {
           console.warn('No category or receipt name selected.');
         }
@@ -98,7 +103,49 @@ const Recipe = ({ route }) => {
       console.error('Virhe tiedon tallentamisessa:', error.message);
     });
 };
-  
+
+//Lisää/päivittää tuotteet ostoslistaan. Käytetään puhelimen muistia 
+const addToGroceryList = async () => {
+
+  //logeja jotka voi poistaa myöhemmin
+  console.log('ingredients sisältö ', ingredients);
+  console.log('ingredients Tyyppi:', typeof ingredients);
+
+  try {
+    // Hae nykyiset ainesosat puhelimen muistilta
+    const currentGroceryList = await AsyncStorage.getItem('groceryList');
+    const currentGroceryListArray = currentGroceryList ? JSON.parse(currentGroceryList) : [];
+    
+    //logeja voi poistaa lopullisesta
+    console.log('currentGroceryList Tyyppi:', typeof currentGroceryList);
+    console.log('currentGroceryListArray Tyyppi:', typeof currentGroceryListArray);
+    console.log('currentGroceryList sisältö ', currentGroceryList);
+    console.log('currentGroceryListArray sisältö', currentGroceryListArray);
+
+    // Muuta ingredients objektista taulukoksi avain-arvo -pareina
+    const ingredientsArray = Object.entries(ingredients);
+    
+    //logeja voi poistaa lopullisesta
+    console.log('ingredientsArray sisältö ', ingredientsArray);
+    console.log('ingredientsArray Tyyppi:', typeof ingredientsArray);
+
+    // Yhdistä nykyiset ja uudet ainesosat
+    const updatedGroceryList = [
+      ...Object.values(currentGroceryListArray), 
+      ...Object.values(ingredientsArray)
+    ];
+
+    // Päivitä ostoslista
+    await updateGroceryList(updatedGroceryList);
+
+    //logeja voi poistaa lopullisesta
+    console.log('Tiedot lisätty ostoslistaan.');
+    console.log("addToGroceryList ingredients", ingredients);
+  } catch (error) {
+    console.error('Virhe tiedon lisäämisessä ostoslistaan:', error.message);
+  }
+};
+
 
   return (
     <ScrollView>
@@ -122,6 +169,8 @@ const Recipe = ({ route }) => {
           ))}
         </Picker>
         <Button title="Lisää viikkotaulukkoon" onPress={addToMealPlan} />
+        <View style={{ marginVertical: 10 }} />
+        <Button title="Lisää Ostoslistaan" onPress={addToGroceryList} />      
       </View>
     </ScrollView>
   );
@@ -182,6 +231,5 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 4, height: 2 },
     shadowOpacity: 4,
     shadowRadius: 4,
-    elevation: 5,
-  },
+  },  
 })

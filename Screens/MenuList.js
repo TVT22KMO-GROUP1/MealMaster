@@ -1,3 +1,4 @@
+//Menulist.js
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/core';
@@ -21,8 +22,8 @@ const MenuList = () => {
           const response = await fetch(url);
           const data = await response.json();
           setMenuData(data);
-          console.log(url);
-          console.log('Fetched menu data:', data);
+          //console.log(url);
+          //console.log('Fetched menu data:', data);
         } else {
           console.warn('No category selected.');
         }
@@ -51,7 +52,7 @@ const MenuList = () => {
     onValue(ref(database, allFavoritesPath), (snapshot) => {
       const data = snapshot.val();
       setIsFavorite(data || {});
-      console.log('Favorites updated:', data);
+      //console.log('Favorites updated:', data);
     });
   }, []);
 
@@ -128,7 +129,6 @@ const MenuList = () => {
               </TouchableOpacity>
             ))}
           </ScrollView>
-          {console.log('selectedRecipes in MenuList:', selectedRecipes)}
         </>
       ) : (
         <View style={styles.noCategoryContainer}>
