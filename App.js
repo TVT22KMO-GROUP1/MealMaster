@@ -9,6 +9,7 @@ import LoginScreen from './Screens/LoginScreen';
 import MenuList from './Screens/MenuList';
 import HomeScreen from './Screens/HomeScreen';
 import Favorites from './Screens/Favorites';
+import Registration from './Screens/Registration';
 import Recipe from './Screens/Recipe';
 import GroceryList from './Screens/GroceryList';
 import PlanMeal from './Screens/PlanMeal';
@@ -64,19 +65,21 @@ export default function App() {
 
   return (
     <GroceryListProvider>
-      <NavigationContainer>
-        <Stack.Navigator screenOptions={stackScreenOptions}>
-          <Stack.Screen options={{ headerShown: false }} name="Login" component={LoginScreen} />
-          <Stack.Screen name="Home">
-            {() => <TabNavigatorComponent selectedRecipes={selectedRecipes} />}
-          </Stack.Screen>
-          <Stack.Screen name="Menu" component={MenuList} />
-          <Stack.Screen name="Recipe" component={Recipe} />
-          <Stack.Screen name="Favorites">
-            {() => <Favorites selectedRecipes={selectedRecipes} />}
-          </Stack.Screen>
-        </Stack.Navigator>
-      </NavigationContainer>
+        <NavigationContainer>
+      <Stack.Navigator screenOptions={stackScreenOptions}>
+        <Stack.Screen options={{ headerShown: false }} name="Login" component={LoginScreen} />
+        <Stack.Screen name="Home">
+          {() => <TabNavigatorComponent selectedRecipes={selectedRecipes} />}
+        </Stack.Screen>
+        <Stack.Screen name="Menu" component={MenuList} />
+        <Stack.Screen name= "Recipe" component={Recipe}/>
+        <Stack.Screen name= "PlanMeal" component={PlanMeal}/>
+        <Stack.Screen name="Favorites">
+          {() => <Favorites selectedRecipes={selectedRecipes} />}
+        </Stack.Screen>
+        <Stack.Screen options = {{headerShown: false }} name="Registration" component={Registration} />
+      </Stack.Navigator>
+    </NavigationContainer>
     </GroceryListProvider>
   );
 }
