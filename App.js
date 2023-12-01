@@ -64,7 +64,8 @@ export default function App() {
   const [selectedRecipes, setSelectedRecipes] = useState([]);
 
   return (
-    <NavigationContainer>
+    <>
+        <NavigationContainer>
       <Stack.Navigator screenOptions={stackScreenOptions}>
         <Stack.Screen options={{ headerShown: false }} name="Login" component={LoginScreen} />
         <Stack.Screen name="Home">
@@ -94,7 +95,7 @@ export default function App() {
         </Stack.Navigator>
       </NavigationContainer>
     </GroceryListProvider>
->>>>>>> c4629b4e58f5b2e44b081e8e5191b68f5533b036
+    </>
   );
 }
 
