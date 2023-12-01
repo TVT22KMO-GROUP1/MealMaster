@@ -1,9 +1,12 @@
+//Recipe.js
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Button, Image } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Button, Image, } from 'react-native';
 import { useNavigation } from '@react-navigation/core'
 import {Picker} from '@react-native-picker/picker';
 import { database, auth,  } from '../firebase';
-import {ref, update, push} from 'firebase/database'
+import {ref, update } from 'firebase/database';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useGroceryList } from '../Components/GroceryListContext';
 
 const Recipe = ({ route }) => {
   const { receiptName } = route.params;
@@ -13,7 +16,7 @@ const Recipe = ({ route }) => {
   const [ingredients, setIngredients] = useState([]);
   const [instructions, setInstructions] = useState([]);
   const [selectedDay, setSelectedDay] = useState('Maanantai');
-
+  const { updateGroceryList } = useGroceryList();
 
   const [mealPlan, setMealPlan] = useState({ 
     Maanantai: [],
@@ -34,7 +37,9 @@ const Recipe = ({ route }) => {
     'Sunnuntai'];
 
   const ingredientList = Object.keys(ingredients).map((ingredient) => (
-    <Text style={styles.ingredientsText} key={ingredient}>{`${ingredient}: ${ingredients[ingredient]}`}</Text>
+    <Text style={styles.ingredientsText} key={ingredient}>
+      {`${ingredient}: ${ingredients[ingredient]}`}
+    </Text>
   ));
 
   useEffect(() => {
@@ -45,15 +50,15 @@ const Recipe = ({ route }) => {
           const response = await fetch(url);
           const data = await response.json();
           setIngredients(data);
-          console.log(url);
-          console.log('Fetched ingredients data:', data);
+          //console.log(url);
+          //console.log('Fetched ingredients data:', data);
 
           const instructionsUrl = `https://meal-base-99bc5-default-rtdb.firebaseio.com/Kategoriat/${selectedCategory}/Reseptit/${receiptName}/Ohje.json`;
           const instructionsResponse = await fetch(instructionsUrl);
           const instructionsData = await instructionsResponse.json();
           setInstructions(instructionsData);
-          console.log(instructionsUrl);
-          console.log('Fetched guide data:', instructionsData);
+          //console.log(instructionsUrl);
+          //console.log('Fetched guide data:', instructionsData);
         } else {
           console.warn('No category or receipt name selected.');
         }
@@ -92,13 +97,55 @@ const Recipe = ({ route }) => {
       });
 
       console.log('Tiedot tallennettu onnistuneesti.');
-      navigation.navigate('PlanMeal', { mealPlan }); 
+      navigation.navigate('MealPlan', { mealPlan }); 
     })
     .catch((error) => {
       console.error('Virhe tiedon tallentamisessa:', error.message);
     });
 };
-  
+
+//Lisää/päivittää tuotteet ostoslistaan. Käytetään puhelimen muistia 
+const addToGroceryList = async () => {
+
+  //logeja jotka voi poistaa myöhemmin
+  console.log('ingredients sisältö ', ingredients);
+  console.log('ingredients Tyyppi:', typeof ingredients);
+
+  try {
+    // Hae nykyiset ainesosat puhelimen muistilta
+    const currentGroceryList = await AsyncStorage.getItem('groceryList');
+    const currentGroceryListArray = currentGroceryList ? JSON.parse(currentGroceryList) : [];
+    
+    //logeja voi poistaa lopullisesta
+    console.log('currentGroceryList Tyyppi:', typeof currentGroceryList);
+    console.log('currentGroceryListArray Tyyppi:', typeof currentGroceryListArray);
+    console.log('currentGroceryList sisältö ', currentGroceryList);
+    console.log('currentGroceryListArray sisältö', currentGroceryListArray);
+
+    // Muuta ingredients objektista taulukoksi avain-arvo -pareina
+    const ingredientsArray = Object.entries(ingredients);
+    
+    //logeja voi poistaa lopullisesta
+    console.log('ingredientsArray sisältö ', ingredientsArray);
+    console.log('ingredientsArray Tyyppi:', typeof ingredientsArray);
+
+    // Yhdistä nykyiset ja uudet ainesosat
+    const updatedGroceryList = [
+      ...Object.values(currentGroceryListArray), 
+      ...Object.values(ingredientsArray)
+    ];
+
+    // Päivitä ostoslista
+    await updateGroceryList(updatedGroceryList);
+
+    //logeja voi poistaa lopullisesta
+    console.log('Tiedot lisätty ostoslistaan.');
+    console.log("addToGroceryList ingredients", ingredients);
+  } catch (error) {
+    console.error('Virhe tiedon lisäämisessä ostoslistaan:', error.message);
+  }
+};
+
 
   return (
     <ScrollView>
@@ -121,7 +168,9 @@ const Recipe = ({ route }) => {
           <Picker.Item key={index} label={day} value={day} />
           ))}
         </Picker>
-        <Button title="Lisää viikkotaulukkoon" onPress={addToMealPlan} />
+        <Button style={styles.button} title="Lisää viikkotaulukkoon" onPress={addToMealPlan} />
+        <View style={{ marginVertical: 10 }} />
+        <Button title="Lisää Ostoslistaan" onPress={addToGroceryList} />      
       </View>
     </ScrollView>
   );
@@ -135,34 +184,38 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     marginLeft:8,
     marginRight:8,
-    
   },
   headerText: {
-    //backgroundColor: 'cyan',
     fontSize: 36,
     marginBottom: 8,
-    marginTop:8,
-    textAlign:'center',
-    borderWidth:2,
-
+    marginTop: 8,
+    textAlign: 'center',
+    borderWidth: 2,
+    borderColor: 'lightgray',
+    padding: 10,
+    borderRadius: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
   },
   instructionsText: {
-    fontSize:16,
-    marginLeft:8,
+    fontSize: 18,
+    marginLeft: 8,
     marginTop: 4,
-    marginBottom:8,
-   
+    marginBottom: 8,
+    color: '#333',
   },
-  ingredientsText :{
-    fontSize:24,
+  ingredientsText: {
+    fontSize: 18, 
     borderBottomWidth: 1,
     borderColor: 'lightgray',
     paddingVertical: 10,
+    color: '#444', 
   },
   ingredientsContainer: {
     flexDirection: 'column',
     justifyContent: 'space-between',
-
     borderBottomWidth: 1,
     borderColor: 'lightgray',
     paddingVertical: 10,
@@ -171,17 +224,27 @@ const styles = StyleSheet.create({
     height: 50,
     width: '100%',
     marginBottom: 16,
-    marginTop: 8,
+    marginTop: 16,
+    borderColor: '#ddd', 
+    borderWidth: 1,
+    borderRadius: 8,
+    backgroundColor: '#f9f9f9', 
   },
   recipeImage: {
     width: '100%',
     height: 300,
     resizeMode: 'cover',
-    borderRadius: 4, 
-    shadowColor: '#fff',
-    shadowOffset: { width: 4, height: 2 },
-    shadowOpacity: 4,
+    borderRadius: 8,
+    marginBottom: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
     shadowRadius: 4,
-    elevation: 5,
+  },
+  button: {
+    marginBottom: 16,
+    backgroundColor: '#4CAF50', // Vihreä taustaväri
+    padding: 12,
+    borderRadius: 8,
   },
 })

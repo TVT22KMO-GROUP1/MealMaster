@@ -21,10 +21,10 @@ const HomeScreen = () => {
       } catch (error) {
         console.error('Error fetching data', error);
       }
+      console.log('kategoriat ', categories);
     };
 
     fetchData();
-    console.log('kategoriat ', categories);
   }, []);
 
   const categoryNames = categoryData ? Object.keys(categoryData) : [];
