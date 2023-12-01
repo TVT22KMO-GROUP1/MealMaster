@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { ScrollView, View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { database, auth, remove } from '../firebase';
 
-const PlanMeal = ({ route }) => {
+const PlanMeal = () => {
   const [mealPlan, setMealPlan] = useState({});
   const daysOfWeek = ['Maanantai', 'Tiistai', 'Keskiviikko', 'Torstai', 'Perjantai', 'Lauantai', 'Sunnuntai'];
 
@@ -28,7 +28,9 @@ const PlanMeal = ({ route }) => {
     });
   }, []); 
 
-  const removeMealPlanForDay = (day) => {
+
+
+  const removeMealForRecipe = (day, recipeName) => {
     const user = auth.currentUser;
 
     if (!user) {
@@ -38,40 +40,43 @@ const PlanMeal = ({ route }) => {
 
     const userEmail = user.email;
     const sanitizedEmail = userEmail.replace(/\./g, '_');
-    const mealPlanPath = `kayttajat/${sanitizedEmail}/ateriasuunnitelma/${day}`;
+    const mealPath = `kayttajat/${sanitizedEmail}/ateriasuunnitelma/${day}/${recipeName}`;
 
-    remove(ref(database, mealPlanPath))
+    remove(ref(database, mealPath))
       .then(() => {
-        console.log(`Ateriasuunnitelma poistettu päivältä ${day}`);
+        console.log(`Ateria "${recipeName}" poistettu päivältä ${day}`);
       })
       .catch((error) => {
-        console.error('Virhe poistettaessa ateriasuunnitelmaa:', error);
+        console.error('Virhe poistettaessa ateriaa:', error);
       });
   };
 
+
   return (
     <ScrollView>
-    <View style={styles.container}>
-      {daysOfWeek.map((day, index) => (
-        <View key={index} style={styles.dayContainer}>
-          <Text style={styles.dayText}>{day}</Text>
-          {Object.entries(mealPlan[day] || {}).map(([recipeName, recipe], recipeIndex) => (
-            <Text key={recipeIndex} style={styles.recipeText}>
-              {recipe.reseptiNimi}
-            </Text>
-          ))}
-          {Object.keys(mealPlan[day] || {}).length === 0 && (
-            <Text style={styles.recipeText}>Ei aterioita tälle päivälle</Text>
-          )}
-      <TouchableOpacity onPress={() => removeMealPlanForDay(day)}>
-      <Text style={styles.removeButton}>Poista suunnitelma</Text>
-    </TouchableOpacity>
-        </View>
-      ))}
-    </View>
-  </ScrollView>
+      <View style={styles.container}>
+        {daysOfWeek.map((day, index) => (
+          <View key={index} style={[styles.dayContainer, { flexGrow: 1, flexShrink: 1 }]}>
+            <Text style={styles.dayText}>{day}</Text>
+            {Object.entries(mealPlan[day] || {}).map(([recipeName, recipe], recipeIndex) => (
+              <View key={recipeIndex} style={styles.recipeContainer}>
+                <View style={styles.recipeInnerContainer}>
+                  <Text style={styles.recipeText}>{recipe.reseptiNimi}</Text>
+                  <TouchableOpacity onPress={() => removeMealForRecipe(day, recipeName)}>
+                    <Text style={styles.removeButton}>Poista ateria</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            ))}
+            {Object.keys(mealPlan[day] || {}).length === 0 && (
+              <Text style={styles.recipeText}>Ei aterioita tälle päivälle</Text>
+            )}
+          </View>
+        ))}
+      </View>
+    </ScrollView>
   );
-};
+  };
 
 const styles = StyleSheet.create({
   container: {
@@ -82,22 +87,40 @@ const styles = StyleSheet.create({
   },
   dayContainer: {
     borderWidth: 1,
-    paddingVertical: 50,
+    paddingVertical: 20,
+    paddingHorizontal: 10,
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 8,
     marginBottom: 8,
-   
+    borderRadius: 10,
   },
   dayText: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: 'bold',
-    alignContent: 'stretch',
+    marginBottom: 10,
+  },
+  recipeText: {
+    fontSize: 16,
+    width: '70%',
+  },
+  recipeContainer: {
+    marginTop: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: '#ccc',
+  },
+  recipeInnerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   removeButton: {
     color: 'red',
-    marginTop: 16,
-    textDecorationLine: 'underline', 
+    fontSize: 14,
+    textDecorationLine: 'underline',
   },
 });
 

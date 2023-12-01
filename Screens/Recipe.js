@@ -1,6 +1,6 @@
 //Recipe.js
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Button, Image } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Button, Image, } from 'react-native';
 import { useNavigation } from '@react-navigation/core'
 import {Picker} from '@react-native-picker/picker';
 import { database, auth,  } from '../firebase';
@@ -97,7 +97,7 @@ const Recipe = ({ route }) => {
       });
 
       console.log('Tiedot tallennettu onnistuneesti.');
-      navigation.navigate('PlanMeal', { mealPlan }); 
+      navigation.navigate('MealPlan', { mealPlan }); 
     })
     .catch((error) => {
       console.error('Virhe tiedon tallentamisessa:', error.message);
@@ -168,7 +168,7 @@ const addToGroceryList = async () => {
           <Picker.Item key={index} label={day} value={day} />
           ))}
         </Picker>
-        <Button title="Lisää viikkotaulukkoon" onPress={addToMealPlan} />
+        <Button style={styles.button} title="Lisää viikkotaulukkoon" onPress={addToMealPlan} />
         <View style={{ marginVertical: 10 }} />
         <Button title="Lisää Ostoslistaan" onPress={addToGroceryList} />      
       </View>
@@ -184,34 +184,38 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     marginLeft:8,
     marginRight:8,
-    
   },
   headerText: {
-    //backgroundColor: 'cyan',
     fontSize: 36,
     marginBottom: 8,
-    marginTop:8,
-    textAlign:'center',
-    borderWidth:2,
-
+    marginTop: 8,
+    textAlign: 'center',
+    borderWidth: 2,
+    borderColor: 'lightgray',
+    padding: 10,
+    borderRadius: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
   },
   instructionsText: {
-    fontSize:16,
-    marginLeft:8,
+    fontSize: 18,
+    marginLeft: 8,
     marginTop: 4,
-    marginBottom:8,
-   
+    marginBottom: 8,
+    color: '#333',
   },
-  ingredientsText :{
-    fontSize:24,
+  ingredientsText: {
+    fontSize: 18, 
     borderBottomWidth: 1,
     borderColor: 'lightgray',
     paddingVertical: 10,
+    color: '#444', 
   },
   ingredientsContainer: {
     flexDirection: 'column',
     justifyContent: 'space-between',
-
     borderBottomWidth: 1,
     borderColor: 'lightgray',
     paddingVertical: 10,
@@ -220,16 +224,27 @@ const styles = StyleSheet.create({
     height: 50,
     width: '100%',
     marginBottom: 16,
-    marginTop: 8,
+    marginTop: 16,
+    borderColor: '#ddd', 
+    borderWidth: 1,
+    borderRadius: 8,
+    backgroundColor: '#f9f9f9', 
   },
   recipeImage: {
     width: '100%',
     height: 300,
     resizeMode: 'cover',
-    borderRadius: 4, 
-    shadowColor: '#fff',
-    shadowOffset: { width: 4, height: 2 },
-    shadowOpacity: 4,
+    borderRadius: 8,
+    marginBottom: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
     shadowRadius: 4,
-  },  
+  },
+  button: {
+    marginBottom: 16,
+    backgroundColor: '#4CAF50', // Vihreä taustaväri
+    padding: 12,
+    borderRadius: 8,
+  },
 })
