@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { KeyboardAvoidingView, ImageBackground, StyleSheet, Text, TextInput, TouchableOpacity, View, Platform, StatusBar, SafeAreaView } from 'react-native';
 import { useNavigation } from '@react-navigation/core';
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
@@ -34,29 +34,6 @@ const LoginScreen = () => {
         setTimeout(() => {
           setError(null);
         }, 5000);
-      });
-  };
-
-  const handleRegister = () => {
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        console.log('User registered with:', userCredential.user.email);
-        setLoginSuccess(true);
-        // Additional logic or navigation can be added here upon successful registration
-      })
-      .catch((error) => {
-        if (error.code === 'auth/email-already-in-use') {
-          setError('This email is already taken');
-        } else if (error.code === 'auth/weak-password') {
-          setError('Password has to be at least 6 figures long');
-        } else {
-          console.log(error.code + ' ' + error.message);
-        }
-
-        // Display error for 5 seconds and then clear it
-        setTimeout(() => {
-          setError(null);
-        }, 4000);
       });
   };
 

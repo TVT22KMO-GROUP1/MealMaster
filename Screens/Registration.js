@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity } from 'react-native';
+import { KeyboardAvoidingView, View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 
@@ -8,57 +8,55 @@ export default function Registration({ navigation }) {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState(null);
+  const [registrationSuccess, setRegistrationSuccess] = useState(false);
 
   const auth = getAuth();
 
   const handleRegistration = () => {
     if (email === '' || password === '' || confirmPassword === '') {
-      setError('Please fill all fields');
+      setError('Täytä kaikki kentät');
       setTimeout(() => {
         setError(null);
       }, 4000);
     }
     else if (password !== confirmPassword) {
-      setError('Passwords do not match');
+      setError('Salasanat ei täsmää');
       setTimeout(() => {
         setError(null);
       }, 4000);
     }
     else {
       createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        console.log('User registered with:', userCredential.user.email);
-        setTimeout(() => {
-          navigation.navigate('Login');
-        }, 1000);
-      })
-      .catch((error) => {
-        if (error.code === 'auth/weak-password') {
-          setError('Password has to be at least 6 figures long');
-        } else if (error.code === 'auth/invalid-email') {
-          setError('Invalid email');
-        }
-        else if (error.code === 'auth/email-already-in-use') {
-          setError('This email is already taken');
-        }
-        else if (password !== confirmPassword) {
-          setError('Passwords do not match');
-        }
-        else {
-          console.log(error.code + ' ' + error.message);
-        }
-        // Display error for 5 seconds and then clear it
-        setTimeout(() => {
-          setError(null);
-        }, 4000);
-      });
+        .then((userCredential) => {
+          console.log('User registered with:', userCredential.user.email);
+          setRegistrationSuccess(true);
+          setTimeout(() => {
+            navigation.navigate('Login');
+          }, 4000);
+        })
+        .catch((error) => {
+          if (error.code === 'auth/weak-password') {
+            setError('Salasanan tulee olla vähintään 6 merkkiä pitkä');
+          } else if (error.code === 'auth/invalid-email') {
+            setError('Sähköposti ei ole oikeassa muodossa');
+          }
+          else if (error.code === 'auth/email-already-in-use') {
+            setError('Sähköposti on jo käytössä');
+          }
+          else {
+            console.log(error.code + ' ' + error.message);
+          }
+          setTimeout(() => {
+            setError(null);
+          }, 4000);
+        });
     }
   };
-  
+
 
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView style={styles.container}>
       <TouchableOpacity
         style={styles.arrowButton}
         onPress={() => navigation.navigate('Login')}
@@ -66,7 +64,7 @@ export default function Registration({ navigation }) {
         <AntDesign name="arrowleft" size={24} color="black" />
       </TouchableOpacity>
       <Text style={styles.title}>Luo uusi käyttäjä</Text>
-      <View style = {styles.inputContainer}>
+      <View style={styles.inputContainer}>
         <Text style={styles.description}>Sähköposti</Text>
         <TextInput
           style={styles.input}
@@ -89,7 +87,7 @@ export default function Registration({ navigation }) {
           onChangeText={(text) => setConfirmPassword(text)}
         />
       </View>
-      
+
       <View style={styles.buttonContainer}>
         <TouchableOpacity onPress={handleRegistration} style={styles.button}>
           <Text style={styles.buttonText}>Rekisteröidy</Text>
@@ -97,9 +95,17 @@ export default function Registration({ navigation }) {
       </View>
 
       {error && (
-        <Text style={styles.errorMessage}>{error}</Text>
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorMessage}>{error}</Text>
+        </View>
       )}
-    </View>
+
+      {registrationSuccess && (
+        <View style={styles.errorContainer}>
+        <Text style={styles.successMessage}>Rekisteröinti onnistui!</Text>
+      </View>
+      )}
+    </KeyboardAvoidingView>
   );
 }
 
@@ -160,5 +166,26 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: '700',
     fontSize: 16,
+  },
+  errorContainer: {
+    position: 'absolute',
+    bottom: 20,
+    left: 0,
+    right: 0,
+    alignItems: 'center',
+  },
+  errorMessage: {
+    color: 'red',
+    marginTop: 10,
+    backgroundColor: 'white',
+    padding: 10,
+    borderRadius: 5,
+  },
+  successMessage: {
+    color: 'green',
+    marginTop: 10,
+    backgroundColor: 'white',
+    padding: 10,
+    borderRadius: 5,
   },
 });
