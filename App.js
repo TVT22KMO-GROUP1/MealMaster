@@ -44,7 +44,7 @@ function TabNavigatorComponent({ selectedRecipes }) {
   return (
     <GroceryListProvider>
       <Tab.Navigator initialRouteName="Home" screenOptions={tabScreenOptions}>
-        <Tab.Screen name="Home">
+        <Tab.Screen name="Koti">
           {() => <HomeScreen selectedRecipes={selectedRecipes} />}
         </Tab.Screen>
 

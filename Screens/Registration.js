@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { KeyboardAvoidingView, View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
+import { KeyboardAvoidingView, View, Text, TextInput, StyleSheet, TouchableOpacity, Platform } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 
@@ -12,48 +12,55 @@ export default function Registration({ navigation }) {
 
   const auth = getAuth();
 
+  const containsEmoji = (text) => {
+    if (Platform.OS === 'android') {
+      return !/^[\x00-\x7F]*$/.test(text)
+    } else {
+      return text.length !== text.replace(/[\u{0080}-\u{FFFF}]/gu, '').length
+    }
+  };
+
   const handleRegistration = () => {
     if (email === '' || password === '' || confirmPassword === '') {
-      setError('Täytä kaikki kentät');
+      setError('Täytä kaikki kentät')
       setTimeout(() => {
-        setError(null);
+        setError(null)
       }, 4000);
     }
     else if (password !== confirmPassword) {
-      setError('Salasanat eivät täsmää');
+      setError('Salasanat eivät täsmää')
       setTimeout(() => {
-        setError(null);
+        setError(null)
       }, 4000);
-    }
-    else {
+    } else if (containsEmoji(email)) {
+      setError('Sähköposti on väärässä muodossa')
+    } else {
       createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
-          console.log('User registered with:', userCredential.user.email);
-          setRegistrationSuccess(true);
+          console.log('User registered with:', userCredential.user.email)
+          setRegistrationSuccess(true)
           setTimeout(() => {
-            navigation.navigate('Login');
+            navigation.navigate('Login')
           }, 4000);
         })
         .catch((error) => {
           if (error.code === 'auth/weak-password') {
-            setError('Salasanan tulee olla vähintään 6 merkkiä pitkä');
+            setError('Salasanan tulee olla vähintään 6 merkkiä pitkä')
           } else if (error.code === 'auth/invalid-email') {
-            setError('Sähköposti ei ole oikeassa muodossa');
+            setError('Sähköposti ei ole oikeassa muodossa')
           }
           else if (error.code === 'auth/email-already-in-use') {
-            setError('Sähköposti on jo käytössä');
+            setError('Sähköposti on jo käytössä')
           }
           else {
-            console.log(error.code + ' ' + error.message);
+            console.log(error.code + ' ' + error.message)
           }
           setTimeout(() => {
-            setError(null);
+            setError(null)
           }, 4000);
         });
     }
   };
-
-
 
   return (
     <KeyboardAvoidingView style={styles.container}>
@@ -65,21 +72,18 @@ export default function Registration({ navigation }) {
       </TouchableOpacity>
       <Text style={styles.title}>Luo uusi käyttäjä</Text>
       <View style={styles.inputContainer}>
-        <Text style={styles.description}>Sähköposti</Text>
         <TextInput
           style={styles.input}
           placeholder="Sähköposti"
           onChangeText={(text) => setEmail(text)}
           keyboardType="email-address"
         />
-        <Text style={styles.description}>Salasana</Text>
         <TextInput
           style={styles.input}
           placeholder="Salasana"
           secureTextEntry={true}
           onChangeText={(text) => setPassword(text)}
         />
-        <Text style={styles.description}>Salasana uudelleen</Text>
         <TextInput
           style={styles.input}
           placeholder="Salasana uudelleen"
@@ -102,8 +106,8 @@ export default function Registration({ navigation }) {
 
       {registrationSuccess && (
         <View style={styles.errorContainer}>
-        <Text style={styles.successMessage}>Rekisteröinti onnistui!</Text>
-      </View>
+          <Text style={styles.successMessage}>Rekisteröinti onnistui!</Text>
+        </View>
       )}
     </KeyboardAvoidingView>
   );
@@ -133,15 +137,6 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 10,
     marginTop: 5,
-  },
-  description: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 5,
-    paddingHorizontal: 10,
-    paddingVertical: 10,
-    textAlign: 'center',
-    textAlignVertical: 'center',
   },
   title: {
     fontSize: 24,
