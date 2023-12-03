@@ -23,9 +23,9 @@ const LoginScreen = () => {
       })
       .catch((error) => {
         if (error.code === 'auth/wrong-password' || error.code === 'auth/invalid-login-credentials' || error.code === 'auth/user-not-found') {
-          setError('Invalid credentials');
+          setError('Väärä sähköposti tai salasana');
         } else if (error.code === 'auth/too-many-requests') {
-          setError('Too many attempts to login');
+          setError('Liian monta yritystä, yritä myöhemmin uudelleen');
         } else {
           console.log(error.code + ' ' + error.message);
         }
@@ -51,13 +51,13 @@ const LoginScreen = () => {
         <StatusBar translucent backgroundColor="transparent" />
         <View style={styles.inputContainer}>
           <TextInput
-            placeholder="Email"
+            placeholder="Sähköposti"
             value={email}
             onChangeText={(text) => setEmail(text)}
             style={styles.input}
           />
           <TextInput
-            placeholder="Password"
+            placeholder="Salasana"
             value={password}
             onChangeText={(text) => setPassword(text)}
             style={styles.input}
@@ -79,7 +79,7 @@ const LoginScreen = () => {
         )}
 
         {loginSuccess && (
-          <Text style={styles.successMessage}>Action successful!</Text>
+          <Text style={styles.successMessage}>Kirjautuminen onnistui!</Text>
         )}
       </KeyboardAvoidingView>
     </ImageBackground>

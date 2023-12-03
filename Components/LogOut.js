@@ -22,7 +22,7 @@ const LogOut = ({ onPress }) => {
       <TouchableOpacity onPress={onPress || (() => handleSignOut())}>
         <View style={{ flexDirection: 'column', alignItems: 'center' }}>
           <MaterialIcons name="logout" size={24} color="black" style={{ marginLeft: 10 }} />
-          <Text style={{ color: 'black' }}>Logout</Text>
+          <Text style={{ color: 'black' }}>Kirjaudu ulos</Text>
         </View>
       </TouchableOpacity>
     </View>
