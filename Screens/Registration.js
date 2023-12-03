@@ -20,7 +20,7 @@ export default function Registration({ navigation }) {
       }, 4000);
     }
     else if (password !== confirmPassword) {
-      setError('Salasanat ei täsmää');
+      setError('Salasanat eivät täsmää');
       setTimeout(() => {
         setError(null);
       }, 4000);

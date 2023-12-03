@@ -1,12 +1,12 @@
-//Favorite.js
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { onValue, ref, remove } from 'firebase/database';
-import { auth, database } from '../firebase';
-import { MaterialIcons } from '@expo/vector-icons';
+import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/core';
+import { auth, database, ref, remove } from '../firebase';  // Update this import statement
+import { onValue } from 'firebase/database';
 
 const Favorites = () => {
-  const [favoriteRecipes, setFavoriteRecipes] = useState([]);
+  const navigation = useNavigation();
+  const [favoriteRecipes, setFavoriteRecipes] = useState({});
 
   useEffect(() => {
     const user = auth.currentUser;
@@ -22,14 +22,27 @@ const Favorites = () => {
 
     const allFavoritesPath = `${favoritesPath}`;
 
-    onValue(ref(database, allFavoritesPath), (snapshot) => {
+    // Use the correct syntax for onValue in Firebase v9
+    const unsubscribe = onValue(ref(database, allFavoritesPath), (snapshot) => {
       const data = snapshot.val();
-      setFavoriteRecipes(data ? Object.entries(data) : []);
-      //console.log('Favorite recipes updated:', favoriteRecipes);
+      console.log('Data from Firebase (Favorites):', data);
+      setFavoriteRecipes(data || {});
     });
+
+    // Cleanup the subscription when the component is unmounted
+    return () => unsubscribe();
   }, []);
 
-  const removeFromFavorites = (recipeName) => {
+  const handleRecipePress = (receiptName) => {
+    const selectedRecipe = favoriteRecipes[receiptName];
+    if (selectedRecipe) {
+      const { reseptiNimi, kuva } = selectedRecipe;
+      navigation.navigate('Recipe', { receiptName: reseptiNimi, selectedCategory: null, imageUri: kuva });
+    }
+  };
+
+  const handleRemoveFromFavorites = (receiptName) => {
+    // Remove the recipe from favorites in Firebase
     const user = auth.currentUser;
 
     if (!user) {
@@ -40,13 +53,18 @@ const Favorites = () => {
     const userEmail = user.email;
     const sanitizedEmail = userEmail.replace(/\./g, '_');
     const favoritesPath = `kayttajat/${sanitizedEmail}/suosikit`;
-    const recipePath = `${favoritesPath}/${recipeName}`;
+    const recipePath = `${favoritesPath}/${receiptName}`;
 
+    // Remove the recipe from favorites
     remove(ref(database, recipePath))
       .then(() => {
         console.log('Recipe removed from favorites successfully.');
-        setFavoriteRecipes((prevRecipes) => prevRecipes.filter(([name]) => name !== recipeName));
-        // You can add any additional logic here if needed
+        // Update the state to reflect the removal
+        setFavoriteRecipes((prevFavorites) => {
+          const newFavorites = { ...prevFavorites };
+          delete newFavorites[receiptName];
+          return newFavorites;
+        });
       })
       .catch((error) => {
         console.error('Error removing recipe from favorites:', error.message);
@@ -55,19 +73,30 @@ const Favorites = () => {
 
   return (
     <View style={styles.container}>
-      <Text>Favorites</Text>
-      {favoriteRecipes && favoriteRecipes.length > 0 ? (
-        favoriteRecipes.map(([recipeName, recipe], index) => (
-          <View key={index} style={styles.favoriteRecipeContainer}>
-            <Text style={styles.favoriteRecipeText}>{recipe.reseptiNimi}</Text>
-            <TouchableOpacity onPress={() => removeFromFavorites(recipeName)}>
-              <MaterialIcons name="cancel" size={24} color="red" />
-            </TouchableOpacity>
+      <Text style={styles.headerText}>Suosikit</Text>
+      <ScrollView contentContainerStyle={styles.imageContainer}>
+        {Object.keys(favoriteRecipes).map((receiptName, index) => (
+          <View key={index}>
+            <View>
+              <Image
+                source={{ uri: favoriteRecipes[receiptName].kuva }}
+                style={styles.image}
+                resizeMode="contain"
+                onError={(error) => console.error('Image loading error:', error)}
+                onLoadStart={() => console.log('Image loading started')}
+                onLoad={() => console.log('Image loading succeeded')}
+                onLoadEnd={() => console.log('Image loading ended')}
+              />
+            </View>
+            <View style={styles.recipeInfo}>
+              <Text>{receiptName}</Text>
+              <TouchableOpacity onPress={() => handleRemoveFromFavorites(receiptName)}>
+                <Text style={styles.removeButton}>❌</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        ))
-      ) : (
-        <Text style={styles.noFavoritesText}>No favorites yet.</Text>
-      )}
+        ))}
+      </ScrollView>
     </View>
   );
 };
@@ -75,28 +104,32 @@ const Favorites = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+  },
+  headerText: {
+    fontSize: 30,
+    marginBottom: 10,
+  },
+  imageContainer: {
+    flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  favoriteRecipeContainer: {
+  image: {
+    width: 200,
+    height: 200,
+    resizeMode: 'cover',
+  },
+  recipeInfo: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    borderWidth: 1,
-    paddingVertical: 20,
     alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 8,
-    marginBottom: 8,
+    marginTop: 5,
   },
-  favoriteRecipeText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    alignContent: 'stretch',
-  },
-  noFavoritesText: {
-    fontSize: 16,
-    marginTop: 20,
-    textAlign: 'center',
+  removeButton: {
+    color: 'red',
+    fontSize: 18,
   },
 });
 

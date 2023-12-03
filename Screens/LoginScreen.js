@@ -70,7 +70,7 @@ const LoginScreen = () => {
             <Text style={styles.buttonText}>Kirjaudu</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={navigateToRegistration} style={styles.buttonOutline}>
-            <Text style={styles.buttonOutlineText}>Uusi käyttäjä? Rekisteröi painamalla tästä</Text>
+            <Text style={styles.buttonOutlineText}>Uusi käyttäjä? Rekisteröidy tästä</Text>
           </TouchableOpacity>
         </View>
 
