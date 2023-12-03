@@ -25,7 +25,7 @@ const LoginScreen = () => {
         if (error.code === 'auth/wrong-password' || error.code === 'auth/invalid-login-credentials' || error.code === 'auth/user-not-found') {
           setError('Väärä sähköposti tai salasana');
         } else if (error.code === 'auth/too-many-requests') {
-          setError('Liian monta yritystä, yritä myöhemmin uudelleen');
+          setError('Liian monta yritystä, yritä myöhemmin uudelleen'); //tarvitaanko??
         } else {
           console.log(error.code + ' ' + error.message);
         }
