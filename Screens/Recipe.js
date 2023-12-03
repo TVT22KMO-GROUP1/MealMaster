@@ -1,4 +1,3 @@
-//Recipe.js
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Button, Image, } from 'react-native';
 import { useNavigation } from '@react-navigation/core'

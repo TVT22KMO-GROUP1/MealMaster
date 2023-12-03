@@ -51,6 +51,7 @@ const MenuList = () => {
 
     onValue(ref(database, allFavoritesPath), (snapshot) => {
       const data = snapshot.val();
+      console.log('Data from Firebase:', data);
       setIsFavorite(data || {});
       //console.log('Favorites updated:', data);
     });
@@ -66,17 +67,17 @@ const MenuList = () => {
 
   const toggleFavorite = async (receiptName) => {
     const user = auth.currentUser;
-
+  
     if (!user) {
       console.log('User is not logged in.');
       return;
     }
-
+  
     const userEmail = user.email;
     const sanitizedEmail = userEmail.replace(/\./g, '_');
     const favoritesPath = `kayttajat/${sanitizedEmail}/suosikit`;
     const recipePath = `${favoritesPath}/${receiptName}`;
-
+  
     if (isFavorite[receiptName]) {
       // Remove from favorites
       remove(ref(database, recipePath))
@@ -96,9 +97,10 @@ const MenuList = () => {
       // Add to favorites
       const favoriteData = {
         reseptiNimi: receiptName,
+        kuva: menuData.Reseptit[receiptName].Kuva, // Include the image URL in the favorite data
         // Add other relevant data about the favorite recipe if needed
       };
-
+  
       update(ref(database, recipePath), favoriteData)
         .then(() => {
           console.log('Dish added to favorites successfully.');
