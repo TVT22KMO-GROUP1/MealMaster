@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { ScrollView, View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { database, auth, remove } from '../firebase';
 
-const PlanMeal = () => {
+const PlanMeal = ({ navigation}) => {
   const [mealPlan, setMealPlan] = useState({});
   const daysOfWeek = ['Maanantai', 'Tiistai', 'Keskiviikko', 'Torstai', 'Perjantai', 'Lauantai', 'Sunnuntai'];
 
@@ -52,6 +52,19 @@ const PlanMeal = () => {
   };
 
 
+  const handleMealPress = (day, recipeName) => {
+    if (recipeName) {
+      const selectedRecipe = mealPlan[day][recipeName];
+      const { kategoria, reseptiNimi, imageUri } = selectedRecipe;
+      console.log('Selected Recipe:', selectedRecipe);
+  
+      // Navigoi Recipe-sivulle ja välitä tarvittavat tiedot
+      navigation.navigate('Recipe', { selectedCategory: kategoria, receiptName: reseptiNimi, imageUri: imageUri, selectedDay: day });
+    }
+  };
+  
+ 
+
   return (
     <ScrollView>
       <View style={styles.container}>
@@ -61,7 +74,9 @@ const PlanMeal = () => {
             {Object.entries(mealPlan[day] || {}).map(([recipeName, recipe], recipeIndex) => (
               <View key={recipeIndex} style={styles.recipeContainer}>
                 <View style={styles.recipeInnerContainer}>
-                  <Text style={styles.recipeText}>{recipe.reseptiNimi}</Text>
+                <TouchableOpacity style={styles.recipeInnerContainer} onPress={() => handleMealPress(day, recipeName)}>
+                    <Text style={styles.recipeText}>{recipe.reseptiNimi}</Text>
+                  </TouchableOpacity>
                   <TouchableOpacity onPress={() => removeMealForRecipe(day, recipeName)}>
                     <Text style={styles.removeButton}>Poista ateria</Text>
                   </TouchableOpacity>
@@ -76,7 +91,7 @@ const PlanMeal = () => {
       </View>
     </ScrollView>
   );
-  };
+};
 
 const styles = StyleSheet.create({
   container: {

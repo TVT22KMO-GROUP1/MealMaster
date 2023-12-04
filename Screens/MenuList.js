@@ -149,17 +149,20 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
+
   },
   receiptContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 20,
+
   },
   image: {
     width: 200,
     height: 200,
     resizeMode: 'cover',
+    borderRadius: 15,
   },
   noCategoryContainer: {
     flex: 1,
@@ -169,6 +172,10 @@ const styles = StyleSheet.create({
   noCategoryText: {
     fontSize: 18,
   },
+
 });
 
 export default MenuList;
+  
+
+

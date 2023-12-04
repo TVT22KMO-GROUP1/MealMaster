@@ -17,6 +17,8 @@ const Recipe = ({ route }) => {
   const [selectedDay, setSelectedDay] = useState('Maanantai');
   const { updateGroceryList } = useGroceryList();
 
+
+
   const [mealPlan, setMealPlan] = useState({ 
     Maanantai: [],
     Tiistai: [],
@@ -41,6 +43,8 @@ const Recipe = ({ route }) => {
     </Text>
   ));
 
+
+  //Haetaan tietokannasta valittu kategoria ja resepti
   useEffect(() => {
     const fetchRecipeData = async () => {
       try {
@@ -85,6 +89,8 @@ const Recipe = ({ route }) => {
     const recipePath = `${dayPath}/${receiptName}`;
     const mealPlanData = {
       reseptiNimi: receiptName,
+      kategoria: selectedCategory,
+      imageUri: imageUri,
     };
   
     update(ref(database, recipePath), mealPlanData)
@@ -101,7 +107,9 @@ const Recipe = ({ route }) => {
     .catch((error) => {
       console.error('Virhe tiedon tallentamisessa:', error.message);
     });
-};
+};  
+//console.log('Params in Recipe:', receiptName, selectedCategory, imageUri, selectedDay);
+
 
 //Lisää/päivittää tuotteet ostoslistaan. Käytetään puhelimen muistia 
 const addToGroceryList = async () => {
