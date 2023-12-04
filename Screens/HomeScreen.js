@@ -36,15 +36,17 @@ const HomeScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.headerText}>Kategoriat</Text>
+      <Text style={styles.headerText}>Valitse kategoria</Text>
       <ScrollView contentContainerStyle={styles.imageContainer}>
         {categoryNames.map((category, index) => (
           <TouchableOpacity key={index} onPress={() => navigateToMenuList(category)}>
-            <Image
-              source={{ uri: categoryData[category].Kuva }}
-              style={[styles.image, { alignSelf: 'center' }]}
-            />
-            <Text style={styles.imageText}>{category}</Text>
+            <View style={styles.categoryContainer}>
+              <Image
+                source={{ uri: categoryData[category].Kuva }}
+                style={styles.image}
+              />
+              <Text style={styles.categoryText}>{category}</Text>
+            </View>
           </TouchableOpacity>
         ))}
       </ScrollView>
@@ -59,26 +61,34 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#f5f5f5', // Lisätty taustaväri
   },
   headerText: {
-    fontSize: 30,
+    fontSize: 24,
+    marginTop:10,
+    marginBottom: 20,
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
   imageContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 10,
+  },
+  categoryContainer: {
+    margin: 10,
+    alignItems: 'center',
   },
   image: {
     width: 130,
     height: 130,
-    marginTop: 25,
-    marginBottom: 5,
-    marginLeft: 20,
-    marginRight: 20,
+    borderRadius: 15, 
   },
-  imageText: {
+  categoryText: {
     textAlign: 'center',
+    marginTop: 5,
+    fontSize: 16,
   },
 });
+
