@@ -3,17 +3,15 @@ import React from 'react';
 import { MaterialIcons } from '@expo/vector-icons';
 
 const TabNavigatorIcons = ({ route, focused, color, size }) => {
-  //console.log("tabNavi route= ",route)
   const iconMap = {
-    Home: 'home',
-    Favorites: 'favorite',
-    MealPlan: 'assignment',
-    GroceryList: 'shopping-cart',
-    
+    Koti: 'home',
+    Suosikit: 'favorite',
+    'Ateria- Suunnitelma': 'assignment',
+    Ostoslista: 'shopping-cart',
   };
 
   const routeName = route?.name || '';
-  const iconName = iconMap[routeName] || 'home';
+  const iconName = iconMap[routeName] || 'home'; // Default to home if no matching icon found
 
   return <MaterialIcons name={iconName} size={size} color={color} />;
 };

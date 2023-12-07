@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
   },
   headerText: {
     fontSize: 30,
-    marginBottom: 10,
+    margin: 20,
   },
   imageContainer: {
     flexGrow: 1,

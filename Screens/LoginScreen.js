@@ -17,9 +17,8 @@ const LoginScreen = () => {
       .then((userCredential) => {
         console.log(userCredential.user);
         setLoginSuccess(true);
-
         // Navigate to HomeScreen upon successful login
-        navigation.replace('Home');
+        navigation.navigate('Home');
       })
       .catch((error) => {
         if (error.code === 'auth/wrong-password' || error.code === 'auth/invalid-login-credentials' || error.code === 'auth/user-not-found') {
