@@ -39,20 +39,20 @@ const tabScreenOptions = ({ route }) => ({
     <TabNavigatorIcons route={route} focused={focused} color={color} size={24} />
   ),
 });
-
+//AteriaSuunnitelma
 function TabNavigator({ selectedRecipes }) {
   return (
       <Tab.Navigator screenOptions={tabScreenOptions}>
-        <Tab.Screen name="Home">
+        <Tab.Screen name="Koti">
           {() => <StackNavigator selectedRecipes={selectedRecipes} />}
         </Tab.Screen>
-        <Tab.Screen name="GroceryList" component={GroceryList} />
+        <Tab.Screen name="Ostoslista" component={GroceryList} />
         <Tab.Screen
-          name="Favorites"
+          name="Suosikit"
           component={Favorites}
           selectedRecipes={{ selectedRecipes }}
         />
-        <Tab.Screen name="MealPlan" component={PlanMeal} />
+        <Tab.Screen name="Ateria- Suunnitelma" component={PlanMeal} />
       </Tab.Navigator>
   );
 }
