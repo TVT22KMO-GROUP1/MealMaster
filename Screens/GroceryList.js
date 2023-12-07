@@ -41,13 +41,22 @@ const GroceryList = () => {
     }
   };
 
+  //Poista kaikki raaka-aineet listalta
+  const handleRemoveAllIngredients = async () => {
+    try {
+      await updateGroceryList({});
+      setSelectedIngredients({});
+    } catch (error) {
+      console.error('Virhe kaikkien raaka-aineiden poistamisessa:', error.message);
+    }
+  };
+
   //Haetaan groceryItems
   const fetchGroceryList = async () => {
     try {
       const ingredientsString = await AsyncStorage.getItem('groceryList');
       if (ingredientsString) {
         const groceryItemsArray = JSON.parse(ingredientsString);
-        // Päivitä groceryItems  
         await updateGroceryList(groceryItemsArray);
       } else {
         console.log('Ostoslistaa ei löydy!.');
@@ -55,20 +64,20 @@ const GroceryList = () => {
     } catch (error) {
       console.error('Virhe tiedon hakemisessa ostoslistasta:', error.message);
     }
-    //logeja jotka voi poistaa lopullisesta
-    console.log("GroceryListProviderin (puhelimen muistissa oleva) groceryItems ", groceryItems)
-    console.log('groceryItems Tyyppi:', typeof groceryItems);
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.headerText}>Ostoslista</Text>
-      <ScrollView>
-        {Object.keys(groceryItems).length > 0 &&
-          Object.entries(groceryItems).map(([ingredient, amount], index) => (
-            <View key={index} style={styles.itemContainer}>
-              <View style={styles.rowContainer}>
-                <Text style={{ color: 'black' }}>{`${ingredient}: ${amount}`}</Text>
+  <View style={styles.container}>
+    <Text style={styles.headerText}>Ostoslista</Text>
+    {Object.keys(groceryItems).length === 0 ? (
+      <Text>Ostoslistasi on tyhjä</Text>
+    ) : (
+      <>
+        <ScrollView>		
+          {Object.entries(groceryItems).map(([ingredient, amount], index) => (
+            <View key={index} style={styles.itemContainer}>			
+              <View style={styles.rowContainer}>	  
+                <Text key={ingredient}>{`${amount}`}</Text>		
                 <CheckBox
                   checked={selectedIngredients[ingredient]}
                   onPress={() => handleCheckboxToggle(ingredient)}
@@ -76,10 +85,14 @@ const GroceryList = () => {
               </View>
             </View>
           ))}
-      </ScrollView>
-      <Button title="Poista valitut" onPress={handleRemoveSelectedIngredients} />
-    </View>
-  );
+        </ScrollView>	
+        <Button title="Poista valitut" onPress={handleRemoveSelectedIngredients} />
+        <View style={{ marginVertical: 10 }} />
+        <Button title="Poista kaikki" onPress={handleRemoveAllIngredients} />
+      </>
+    )}
+  </View>
+);
 };
 
 export default GroceryList;
@@ -100,8 +113,7 @@ const styles = StyleSheet.create({
     borderColor: 'lightgray',
   },
   rowContainer: {
-    flexDirection:
- 'row',
+    flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },

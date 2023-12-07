@@ -6,6 +6,7 @@ import { database, auth,  } from '../firebase';
 import {ref, update } from 'firebase/database';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useGroceryList } from '../Components/GroceryListContext';
+import { Alert } from 'react-native';
 
 const Recipe = ({ route }) => {
   const { receiptName } = route.params;
@@ -102,7 +103,8 @@ const Recipe = ({ route }) => {
       });
 
       console.log('Tiedot tallennettu onnistuneesti.');
-      navigation.navigate('MealPlan', { mealPlan }); 
+      Alert.alert('Ateriasuunnitelma päivitetty', 'Ateria lisätty ateriasuunnitelmaan.');
+      //navigation.navigate('MealPlan', { mealPlan }); 
     })
     .catch((error) => {
       console.error('Virhe tiedon tallentamisessa:', error.message);
@@ -113,41 +115,24 @@ const Recipe = ({ route }) => {
 
 //Lisää/päivittää tuotteet ostoslistaan. Käytetään puhelimen muistia 
 const addToGroceryList = async () => {
-
-  //logeja jotka voi poistaa myöhemmin
-  console.log('ingredients sisältö ', ingredients);
-  console.log('ingredients Tyyppi:', typeof ingredients);
-
   try {
+
     // Hae nykyiset ainesosat puhelimen muistilta
     const currentGroceryList = await AsyncStorage.getItem('groceryList');
     const currentGroceryListArray = currentGroceryList ? JSON.parse(currentGroceryList) : [];
-    
-    //logeja voi poistaa lopullisesta
-    console.log('currentGroceryList Tyyppi:', typeof currentGroceryList);
-    console.log('currentGroceryListArray Tyyppi:', typeof currentGroceryListArray);
-    console.log('currentGroceryList sisältö ', currentGroceryList);
-    console.log('currentGroceryListArray sisältö', currentGroceryListArray);
 
     // Muuta ingredients objektista taulukoksi avain-arvo -pareina
     const ingredientsArray = Object.entries(ingredients);
-    
-    //logeja voi poistaa lopullisesta
-    console.log('ingredientsArray sisältö ', ingredientsArray);
-    console.log('ingredientsArray Tyyppi:', typeof ingredientsArray);
-
+   
     // Yhdistä nykyiset ja uudet ainesosat
     const updatedGroceryList = [
       ...Object.values(currentGroceryListArray), 
       ...Object.values(ingredientsArray)
     ];
-
     // Päivitä ostoslista
     await updateGroceryList(updatedGroceryList);
+    Alert.alert('Ostoslista päivitetty', 'Ainesosat lisätty ostoslistaan.');
 
-    //logeja voi poistaa lopullisesta
-    console.log('Tiedot lisätty ostoslistaan.');
-    console.log("addToGroceryList ingredients", ingredients);
   } catch (error) {
     console.error('Virhe tiedon lisäämisessä ostoslistaan:', error.message);
   }
