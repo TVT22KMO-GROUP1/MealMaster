@@ -1,5 +1,4 @@
-//App.js
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
@@ -39,49 +38,61 @@ const tabScreenOptions = ({ route }) => ({
     <TabNavigatorIcons route={route} focused={focused} color={color} size={24} />
   ),
 });
-//AteriaSuunnitelma
-function TabNavigator({ selectedRecipes }) {
+
+function AuthenticatedNavigator({ selectedRecipes }) {
   return (
-      <Tab.Navigator screenOptions={tabScreenOptions}>
-        <Tab.Screen name="Koti">
-          {() => <StackNavigator selectedRecipes={selectedRecipes} />}
-        </Tab.Screen>
-        <Tab.Screen name="Ostoslista" component={GroceryList} />
-        <Tab.Screen
-          name="Suosikit"
-          component={Favorites}
-          selectedRecipes={{ selectedRecipes }}
-        />
-        <Tab.Screen name="Ateria- Suunnitelma" component={PlanMeal} />
-      </Tab.Navigator>
+    <Tab.Navigator screenOptions={tabScreenOptions}>
+      <Tab.Screen name="Koti">
+        {() => <AuthenticatedStackNavigator selectedRecipes={selectedRecipes} />}
+      </Tab.Screen>
+      <Tab.Screen name="Ostoslista" component={GroceryList} />
+      <Tab.Screen name="Suosikit" component={Favorites} />
+      <Tab.Screen name="Ateria- Suunnitelma" component={PlanMeal} />
+    </Tab.Navigator>
   );
 }
 
-function StackNavigator() {
-  
+function AuthenticatedStackNavigator({ selectedRecipes }) {
   return (
-      <Stack.Navigator initialRouteName="Login" screenOptions={stackScreenOptions}>
-		    <Stack.Screen options={{ headerShown: false }} name="Login" component={LoginScreen} />
-        <Stack.Screen options={{headerShown: false }} name="Registration" component={Registration} />
-        <Stack.Screen name="Home">
-          {() => <HomeScreen />}
-        </Stack.Screen>
-		    <Stack.Screen name="Menu" component={MenuList} />
-        <Stack.Screen name="Recipe" component={Recipe} />
-        <Stack.Screen name="Favorites">
-          {() => <Favorites selectedRecipes={selectedRecipes} />}
-        </Stack.Screen>
-      </Stack.Navigator>
+    <Stack.Navigator screenOptions={stackScreenOptions}>
+      <Stack.Screen name="Home" component={HomeScreen} />
+      <Stack.Screen name="Menu" component={MenuList} />
+      <Stack.Screen name="Recipe" component={Recipe} />
+      <Stack.Screen name="Favorites" component={Favorites} />
+    </Stack.Navigator>
+  );
+}
+
+
+function UnauthenticatedStackNavigator() {
+  return (
+    <Stack.Navigator initialRouteName="Login" screenOptions={stackScreenOptions}>
+      <Stack.Screen options={{ headerShown: false }} name="Login" component={LoginScreen} />
+      <Stack.Screen options={{ headerShown: false }} name="Registration" component={Registration} />
+    </Stack.Navigator>
   );
 }
 
 export default function App() {
   const [selectedRecipes, setSelectedRecipes] = useState([]);
+  const [userLoggedIn, setUserLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      setUserLoggedIn(!!user);
+    });
+
+    return unsubscribe;
+  }, []);
 
   return (
     <GroceryListProvider value={{ selectedRecipes, setSelectedRecipes }}>
       <NavigationContainer>
-        <TabNavigator/>
+        {userLoggedIn ? (
+          <AuthenticatedNavigator selectedRecipes={selectedRecipes} />
+        ) : (
+          <UnauthenticatedStackNavigator />
+        )}
       </NavigationContainer>
     </GroceryListProvider>
   );
