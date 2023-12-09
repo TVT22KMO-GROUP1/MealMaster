@@ -39,9 +39,6 @@ export default function Registration({ navigation }) {
         .then((userCredential) => {
           console.log('User registered with:', userCredential.user.email)
           setRegistrationSuccess(true)
-          setTimeout(() => {
-            navigation.navigate('Login')
-          }, 4000);
         })
         .catch((error) => {
           if (error.code === 'auth/weak-password') {
@@ -77,18 +74,21 @@ export default function Registration({ navigation }) {
           placeholder="Sähköposti"
           onChangeText={(text) => setEmail(text)}
           keyboardType="email-address"
+          autoCapitalize='none'
         />
         <TextInput
           style={styles.input}
           placeholder="Salasana"
           secureTextEntry={true}
           onChangeText={(text) => setPassword(text)}
+          autoCapitalize='none'
         />
         <TextInput
           style={styles.input}
           placeholder="Salasana uudelleen"
           secureTextEntry={true}
           onChangeText={(text) => setConfirmPassword(text)}
+          autoCapitalize='none'
         />
       </View>
 
@@ -101,12 +101,6 @@ export default function Registration({ navigation }) {
       {error && (
         <View style={styles.errorContainer}>
           <Text style={styles.errorMessage}>{error}</Text>
-        </View>
-      )}
-
-      {registrationSuccess && (
-        <View style={styles.errorContainer}>
-          <Text style={styles.successMessage}>Rekisteröinti onnistui!</Text>
         </View>
       )}
     </KeyboardAvoidingView>
@@ -133,10 +127,11 @@ const styles = StyleSheet.create({
   },
   input: {
     backgroundColor: 'white',
-    paddingHorizontal: 15,
-    paddingVertical: 10,
-    borderRadius: 10,
-    marginTop: 5,
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+    borderRadius: 25,
+    marginTop: 20,
+    fontSize: 16
   },
   title: {
     fontSize: 24,
@@ -172,15 +167,9 @@ const styles = StyleSheet.create({
   errorMessage: {
     color: 'red',
     marginTop: 10,
-    backgroundColor: 'white',
-    padding: 10,
-    borderRadius: 5,
-  },
-  successMessage: {
-    color: 'green',
-    marginTop: 10,
-    backgroundColor: 'white',
-    padding: 10,
+    backgroundColor: 'rgba(255, 0, 0, 0.1)',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
     borderRadius: 5,
   },
 });
