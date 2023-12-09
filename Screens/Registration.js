@@ -12,6 +12,7 @@ export default function Registration({ navigation }) {
 
   const auth = getAuth();
 
+  //tarkistetaan sisältääkö sähköposti emojeita
   const containsEmoji = (text) => {
     if (Platform.OS === 'android') {
       return !/^[\x00-\x7F]*$/.test(text)
@@ -20,27 +21,35 @@ export default function Registration({ navigation }) {
     }
   };
 
+  //rekiisteröidään käyttäjä
   const handleRegistration = () => {
+    //tarkistetaan että kaikki kentät on täytetty
     if (email === '' || password === '' || confirmPassword === '') {
       setError('Täytä kaikki kentät')
       setTimeout(() => {
         setError(null)
       }, 4000);
     }
+    //tarkistetaan että salasanat täsmäävät
     else if (password !== confirmPassword) {
       setError('Salasanat eivät täsmää')
       setTimeout(() => {
         setError(null)
       }, 4000);
-    } else if (containsEmoji(email)) {
+    }
+    //tarkistetaan että sähköposti on oikeassa muodossa 
+    else if (containsEmoji(email)) {
       setError('Sähköposti on väärässä muodossa')
-    } else {
+    }
+    //jos kaikki kentät on täytetty ja sähköposti on oikeassa muodossa, siirrytään varsinaiseen rekisteröintiin
+    else {
       createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
           console.log('User registered with:', userCredential.user.email)
           setRegistrationSuccess(true)
         })
         .catch((error) => {
+          //ei anna rekisteröidä jos salasana ei ole tarpeeksi pitkä, se ei ole oikeassa muodossa, sähköposti on jo käytössä tai jokin muu virhe
           if (error.code === 'auth/weak-password') {
             setError('Salasanan tulee olla vähintään 6 merkkiä pitkä')
           } else if (error.code === 'auth/invalid-email') {
@@ -52,6 +61,7 @@ export default function Registration({ navigation }) {
           else {
             console.log(error.code + ' ' + error.message)
           }
+          //virheilmoitus näkyy 4 sekuntia
           setTimeout(() => {
             setError(null)
           }, 4000);
@@ -97,7 +107,7 @@ export default function Registration({ navigation }) {
           <Text style={styles.buttonText}>Rekisteröidy</Text>
         </TouchableOpacity>
       </View>
-
+      
       {error && (
         <View style={styles.errorContainer}>
           <Text style={styles.errorMessage}>{error}</Text>
