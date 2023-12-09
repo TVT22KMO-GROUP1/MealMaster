@@ -13,6 +13,7 @@ const MenuList = () => {
   const [selectedRecipes, setSelectedRecipes] = useState([])
   const [isFavorite, setIsFavorite] = useState({})
 
+  //valitun kategorian reseptien haku
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -30,6 +31,7 @@ const MenuList = () => {
     };
     fetchData();
   }, [selectedCategory])
+
 
   useEffect(() => {
     const user = auth.currentUser
@@ -52,8 +54,10 @@ const MenuList = () => {
     })
   }, []);
 
+  //valitun kategorian reseptien nimet
   const receiptNames = menuData ? Object.keys(menuData.Reseptit) : []
 
+  //reseptinäkymään siirtyminen
   const handleReceiptPress = (receiptName, imageUri) => {
     if (receiptName) {
       navigation.navigate('Recipe', { receiptName: receiptName, selectedCategory: selectedCategory, imageUri })
