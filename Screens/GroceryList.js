@@ -1,6 +1,6 @@
 //GroceryList.js
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, Button, FlatList, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Button, FlatList, Alert, TouchableOpacity } from 'react-native';
 import { CheckBox } from 'react-native-elements';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useGroceryList } from '../Components/GroceryListContext';
@@ -101,9 +101,12 @@ const GroceryList = () => {
               </View>
             ))}
           </ScrollView>
-          <Button title="Poista valitut" onPress={handleRemoveSelectedIngredients} />
-          <View style={{ marginVertical: 10 }} />
-          <Button title="Poista kaikki" onPress={handleRemoveAllIngredients} />
+          <TouchableOpacity style={styles.button} onPress={handleRemoveSelectedIngredients} >
+              <Text style={styles.buttonText}>Poista valitut</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.button} onPress={handleRemoveAllIngredients} >
+          <Text style={styles.buttonText}>Poista kaikki</Text>
+          </TouchableOpacity>
         </>
       )}
     </View>
@@ -130,7 +133,8 @@ const styles = StyleSheet.create({
     backgroundColor:'#E5E7E9',
     borderColor:'#C5C7BD',
     padding:8,
-    color:'#424949' 
+    color:'#424949',
+    width: '80%' 
   },
   itemContainer: {
     padding: 10,
@@ -145,6 +149,7 @@ const styles = StyleSheet.create({
   scrollViewcontainer: {
     flex: 1,
     width: '100%',
+    
   },
   itemText: {
     fontSize: 16,
@@ -152,5 +157,20 @@ const styles = StyleSheet.create({
   quantityText: {
     fontSize: 14,
     color: 'gray',
+  },
+  button: {
+    padding: 12,
+    marginTop:8,
+    borderRadius: 5,
+    borderWidth:1,
+    backgroundColor:'#D5DBDB',
+    borderColor:'#C5C7BD',
+    width: '80%'
+ 
+  },
+  buttonText:{
+    fontSize: 14,
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
 });
