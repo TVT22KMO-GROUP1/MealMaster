@@ -59,35 +59,33 @@ export default HomeScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
     backgroundColor: '#f5f5f5', // Lisätty taustaväri
+    paddingVertical: 20,
+    paddingHorizontal: 20,
   },
   headerText: {
     fontSize: 24,
-    marginTop:10,
-    marginBottom: 20,
     fontWeight: 'bold',
     textAlign: 'center',
+    marginBottom: 20,
   },
   imageContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: 'space-evenly',
   },
   categoryContainer: {
-    margin: 10,
     alignItems: 'center',
+    marginBottom: 20,
   },
   image: {
-    width: 130,
-    height: 130,
+    width: 150,
+    height: 150,
     borderRadius: 15, 
   },
   categoryText: {
     textAlign: 'center',
-    marginTop: 5,
+    marginTop: 10,
     fontSize: 16,
   },
 });

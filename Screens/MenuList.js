@@ -13,6 +13,7 @@ const MenuList = () => {
   const [selectedRecipes, setSelectedRecipes] = useState([])
   const [isFavorite, setIsFavorite] = useState({})
 
+  //valitun kategorian reseptien haku
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -30,6 +31,7 @@ const MenuList = () => {
     };
     fetchData();
   }, [selectedCategory])
+
 
   useEffect(() => {
     const user = auth.currentUser
@@ -52,8 +54,10 @@ const MenuList = () => {
     })
   }, []);
 
+  //valitun kategorian reseptien nimet
   const receiptNames = menuData ? Object.keys(menuData.Reseptit) : []
 
+  //reseptinäkymään siirtyminen
   const handleReceiptPress = (receiptName, imageUri) => {
     if (receiptName) {
       navigation.navigate('Recipe', { receiptName: receiptName, selectedCategory: selectedCategory, imageUri })
@@ -74,7 +78,6 @@ const MenuList = () => {
     const recipePath = `${favoritesPath}/${receiptName}`
 
     if (isFavorite[receiptName]) {
-      // Remove from favorites
       remove(ref(database, recipePath))
         .then(() => {
           console.log('Recipe removed from favorites successfully.')
@@ -89,11 +92,9 @@ const MenuList = () => {
           console.error('Error removing recipe from favorites:', error.message)
         });
     } else {
-      // Add to favorites
       const favoriteData = {
         reseptiNimi: receiptName,
-        kuva: menuData.Reseptit[receiptName].Kuva, // Include the image URL in the favorite data
-        // Add other relevant data about the favorite recipe if needed
+        kuva: menuData.Reseptit[receiptName].Kuva,
       };
 
       update(ref(database, recipePath), favoriteData)
@@ -139,29 +140,29 @@ const MenuList = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'flex-start',
-    alignItems: 'center',
+    paddingVertical: 20,
+    paddingHorizontal: 20,
   },
-  headerText: {
-    fontSize: 30,
+  headerText: {    
+    fontSize: 24,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 20,
   },
   imageContainer: {
     flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
-
   },
   receiptContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 20,
-
   },
   image: {
     width: 200,
     height: 200,
-    resizeMode: 'cover',
     borderRadius: 15,
   },
   noCategoryContainer: {
@@ -172,7 +173,6 @@ const styles = StyleSheet.create({
   noCategoryText: {
     fontSize: 18,
   },
-
 });
 
 export default MenuList;

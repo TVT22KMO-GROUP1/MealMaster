@@ -22,27 +22,24 @@ const Favorites = () => {
 
     const allFavoritesPath = `${favoritesPath}`;
 
-    // Use the correct syntax for onValue in Firebase v9
     const unsubscribe = onValue(ref(database, allFavoritesPath), (snapshot) => {
       const data = snapshot.val();
       console.log('Data from Firebase (Favorites):', data);
       setFavoriteRecipes(data || {});
     });
 
-    // Cleanup the subscription when the component is unmounted
     return () => unsubscribe();
   }, []);
 
-  const handleRecipePress = (receiptName) => {
-    const selectedRecipe = favoriteRecipes[receiptName];
-    if (selectedRecipe) {
-      const { reseptiNimi, kuva } = selectedRecipe;
-      navigation.navigate('Recipe', { receiptName: reseptiNimi, selectedCategory: null, imageUri: kuva });
+  const handleRecipePress = (receiptName, kuva) => {
+    if (receiptName) {
+      const selectedRecipe = favoriteRecipes[receiptName];
+      const { kategoria, reseptiNimi, kuva } = selectedRecipe;
+      navigation.navigate('Recipe', { selectedCategory: kategoria, receiptName: reseptiNimi, imageUri: kuva });
     }
   };
 
   const handleRemoveFromFavorites = (receiptName) => {
-    // Remove the recipe from favorites in Firebase
     const user = auth.currentUser;
 
     if (!user) {
@@ -55,11 +52,9 @@ const Favorites = () => {
     const favoritesPath = `kayttajat/${sanitizedEmail}/suosikit`;
     const recipePath = `${favoritesPath}/${receiptName}`;
 
-    // Remove the recipe from favorites
     remove(ref(database, recipePath))
       .then(() => {
         console.log('Recipe removed from favorites successfully.');
-        // Update the state to reflect the removal
         setFavoriteRecipes((prevFavorites) => {
           const newFavorites = { ...prevFavorites };
           delete newFavorites[receiptName];
@@ -76,40 +71,43 @@ const Favorites = () => {
       <Text style={styles.headerText}>Suosikit</Text>
       <ScrollView contentContainerStyle={styles.imageContainer}>
         {Object.keys(favoriteRecipes).map((receiptName, index) => (
-          <View key={index}>
-            <View>
+          <TouchableOpacity key={index} onPress={() => handleRecipePress(receiptName)}>
+            <View style={styles.recipeItem}>
               <Image
                 source={{ uri: favoriteRecipes[receiptName].kuva }}
                 style={styles.image}
-                resizeMode="contain"
+                resizeMode="cover"
                 onError={(error) => console.error('Image loading error:', error)}
                 onLoadStart={() => console.log('Image loading started')}
                 onLoad={() => console.log('Image loading succeeded')}
                 onLoadEnd={() => console.log('Image loading ended')}
               />
+              <View style={styles.recipeInfo}>
+                <Text style={styles.receiptName}>{receiptName}</Text>
+                <TouchableOpacity onPress={() => handleRemoveFromFavorites(receiptName)}>
+                  <Text style={styles.removeButton}>❌</Text>
+                </TouchableOpacity>
+              </View>
             </View>
-            <View style={styles.recipeInfo}>
-              <Text>{receiptName}</Text>
-              <TouchableOpacity onPress={() => handleRemoveFromFavorites(receiptName)}>
-                <Text style={styles.removeButton}>❌</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
+          </TouchableOpacity>
         ))}
       </ScrollView>
     </View>
   );
 };
 
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'flex-start',
-    alignItems: 'center',
+    paddingVertical: 20,
+    paddingHorizontal: 20,
   },
   headerText: {
-    fontSize: 30,
-    margin: 20,
+    fontSize: 24,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 20,
   },
   imageContainer: {
     flexGrow: 1,
@@ -125,7 +123,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 5,
+    marginBottom: 20,
   },
   removeButton: {
     color: 'red',

@@ -13,27 +13,33 @@ const LoginScreen = () => {
   const auth = getAuth();
 
   const handleLogin = () => {
-    signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        console.log(userCredential.user);
-        setLoginSuccess(true);
-        // Navigate to HomeScreen upon successful login
-        navigation.navigate('Home');
-      })
-      .catch((error) => {
-        if (error.code === 'auth/wrong-password' || error.code === 'auth/invalid-login-credentials' || error.code === 'auth/user-not-found') {
-          setError('Väärä sähköposti tai salasana');
-        } else if (error.code === 'auth/too-many-requests') {
-          setError('Liian monta yritystä, yritä myöhemmin uudelleen'); //tarvitaanko??
-        } else {
-          console.log(error.code + ' ' + error.message);
-        }
-
-        // Display error for 5 seconds and then clear it
-        setTimeout(() => {
-          setError(null);
-        }, 5000);
-      });
+    if (email === '' || password === '') {
+      setError('Täytä kaikki kentät');
+      setTimeout(() => {
+        setError(null);
+      }, 5000);
+      return;
+    }
+    else {
+      signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          console.log(userCredential.user);
+          setLoginSuccess(true);
+          navigation.navigate('Home');
+        })
+        .catch((error) => {
+          if (error.code === 'auth/wrong-password' || error.code === 'auth/invalid-login-credentials') {
+            setError('Väärä sähköposti tai salasana');
+          } else if (error.code === 'auth/invalid-email') {
+            setError('Sähköposti ei ole oikeassa muodossa')
+          } else {
+            console.log(error.code + ' ' + error.message);
+          }
+          setTimeout(() => {
+            setError(null);
+          }, 5000);
+        });
+    }
   };
 
   const navigateToRegistration = () => {
@@ -41,47 +47,44 @@ const LoginScreen = () => {
   }
 
   return (
-    <ImageBackground
-      source={require('../assets/ruokabg.png')}
-      style={styles.backgroundImage}
-      imageStyle={styles.backgroundImageStyle}
-    >
-      <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-        <StatusBar translucent backgroundColor="transparent" />
-        <View style={styles.inputContainer}>
-          <TextInput
-            placeholder="Sähköposti"
-            value={email}
-            onChangeText={(text) => setEmail(text)}
-            style={styles.input}
-          />
-          <TextInput
-            placeholder="Salasana"
-            value={password}
-            onChangeText={(text) => setPassword(text)}
-            style={styles.input}
-            secureTextEntry
-          />
-        </View>
+    <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+      <StatusBar translucent backgroundColor="transparent" />
+      <View style={styles.inputContainer}>
+        <TextInput
+          placeholder="Sähköposti"
+          value={email}
+          onChangeText={(text) => setEmail(text)}
+          keyboardType="email-address"
+          style={styles.input}
+        />
+        <TextInput
+          placeholder="Salasana"
+          value={password}
+          onChangeText={(text) => setPassword(text)}
+          style={styles.input}
+          secureTextEntry
+        />
+      </View>
 
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity onPress={handleLogin} style={styles.button}>
-            <Text style={styles.buttonText}>Kirjaudu</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={navigateToRegistration} style={styles.buttonOutline}>
-            <Text style={styles.buttonOutlineText}>Uusi käyttäjä? Rekisteröidy tästä</Text>
-          </TouchableOpacity>
-        </View>
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity onPress={handleLogin} style={styles.button}>
+          <Text style={styles.buttonText}>Kirjaudu</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={navigateToRegistration} style={styles.buttonOutline}>
+          <Text style={styles.buttonOutlineText}>Uusi käyttäjä? Rekisteröidy</Text>
+        </TouchableOpacity>
+      </View>
 
-        {error && (
+      {error && (
+        <View style={styles.errorContainer}>
           <Text style={styles.errorMessage}>{error}</Text>
-        )}
+        </View>
+      )}
 
-        {loginSuccess && (
-          <Text style={styles.successMessage}>Kirjautuminen onnistui!</Text>
-        )}
-      </KeyboardAvoidingView>
-    </ImageBackground>
+      {loginSuccess && (
+        <Text style={styles.successMessage}>Kirjautuminen onnistui!</Text>
+      )}
+    </KeyboardAvoidingView>
   );
 };
 
@@ -90,21 +93,23 @@ export default LoginScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    marginTop: 50,
+    padding: 20,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
-    width: '100%', // Set the width to cover the entire screen
-    height: '100%', // Set the height to cover the entire screen
+    width: '100%',
+    height: '100%',
   },
   inputContainer: {
     width: '80%',
   },
   input: {
     backgroundColor: 'white',
-    paddingHorizontal: 15,
-    paddingVertical: 10,
-    borderRadius: 10,
-    marginTop: 5,
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+    borderRadius: 25,
+    marginTop: 20,
+    fontSize: 16
   },
   buttonContainer: {
     width: '60%',
@@ -115,17 +120,17 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: '#0782F9',
     width: '100%',
-    padding: 15,
-    borderRadius: 10,
+    padding: 18,
+    borderRadius: 25,
     alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: 20,
   },
   buttonOutline: {
-    backgroundColor: 'white',
+    backgroundColor: 'transparent',
     borderColor: '#0782F9',
     borderWidth: 2,
-    borderRadius: 10,
-    padding: 15,
+    borderRadius: 25,
+    padding: 18,
     alignItems: 'center',
   },
   buttonText: {
@@ -138,6 +143,13 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     fontSize: 16,
   },
+  errorContainer: {
+    position: 'absolute',
+    bottom: 20,
+    left: 0,
+    right: 0,
+    alignItems: 'center',
+  },
   successMessage: {
     color: 'green',
     marginTop: 10,
@@ -145,15 +157,9 @@ const styles = StyleSheet.create({
   errorMessage: {
     color: 'red',
     marginTop: 10,
-  },
-  backgroundImage: {
-    flex: 1,
-    resizeMode: 'cover',
-    justifyContent: 'flex-start', // Align to the top of the container
-    alignItems: 'center',
-  },
-  backgroundImageStyle: {
-    // Additional styling for the background image
-    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
+    backgroundColor: 'rgba(255, 0, 0, 0.1)',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 5,
   },
 });
