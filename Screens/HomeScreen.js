@@ -39,7 +39,7 @@ const HomeScreen = () => {
       <Text style={styles.headerText}>Valitse kategoria</Text>
       <ScrollView contentContainerStyle={styles.imageContainer}>
         {categoryNames.map((category, index) => (
-          <TouchableOpacity key={index} onPress={() => navigateToMenuList(category)}>
+          <TouchableOpacity style={styles.testi} key={index} onPress={() => navigateToMenuList(category)}>
             <View style={styles.categoryContainer}>
               <Image
                 source={{ uri: categoryData[category].Kuva }}
@@ -67,7 +67,14 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom: 20,
+    marginBottom: 16,
+    borderRadius: 5,
+    borderWidth:1,
+    overflow: 'hidden',
+    backgroundColor:'#E5E7E9',
+    borderColor:'#C5C7BD',
+    padding:8,
+    color:'#424949'
   },
   imageContainer: {
     flexDirection: 'row',
@@ -76,17 +83,30 @@ const styles = StyleSheet.create({
   },
   categoryContainer: {
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 10,
   },
   image: {
     width: 150,
     height: 150,
-    borderRadius: 15, 
+    borderBottomLeftRadius: 5,  // Alakulman pyöristys
+    borderBottomRightRadius: 5, // Alakulman pyöristys
+    borderTopLeftRadius: 8,      // Yläkulman pyöristys
+    borderTopRightRadius: 8, 
+    marginBottom:0,
+    borderWidth:1,
+    borderColor:'#85929E'
   },
   categoryText: {
     textAlign: 'center',
-    marginTop: 10,
+    marginTop: 8,
     fontSize: 16,
   },
+  testi:{
+    borderWidth:1.7,
+    borderRadius:10,
+    marginBottom:10,
+    backgroundColor: '#D5DBDB',
+    borderColor:'#85929E'
+  }
 });
 

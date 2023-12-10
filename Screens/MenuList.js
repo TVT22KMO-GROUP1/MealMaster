@@ -95,6 +95,7 @@ const MenuList = () => {
       const favoriteData = {
         reseptiNimi: receiptName,
         kuva: menuData.Reseptit[receiptName].Kuva,
+        kategoria: selectedCategory
       };
 
       update(ref(database, recipePath), favoriteData)
@@ -113,13 +114,13 @@ const MenuList = () => {
     <View style={styles.container}>
       {selectedCategory ? (
         <>
-          <Text style={styles.headerText}>Ateriat</Text>
+          <Text style={styles.headerText}>{selectedCategory}</Text>
           <ScrollView contentContainerStyle={styles.imageContainer}>
             {receiptNames.map((receiptName, index) => (
-              <TouchableOpacity key={index} onPress={() => handleReceiptPress(receiptName, menuData.Reseptit[receiptName].Kuva)}>
+              <TouchableOpacity style={styles.testi} key={index} onPress={() => handleReceiptPress(receiptName, menuData.Reseptit[receiptName].Kuva)}>
                 <Image source={{ uri: menuData.Reseptit[receiptName].Kuva }} style={styles.image} />
                 <View style={styles.receiptContainer}>
-                  <Text>{receiptName}</Text>
+                  <Text style={styles.receiptText}>{receiptName}</Text>
                   <TouchableOpacity onPress={() => toggleFavorite(receiptName)}>
                     <MaterialIcons name="favorite" size={24} color={isFavorite[receiptName] ? 'red' : 'gray'} />
                   </TouchableOpacity>
@@ -147,23 +148,37 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom: 20,
+    marginBottom: 16,
+    borderRadius: 5,
+    borderWidth:1,
+    overflow: 'hidden',
+    backgroundColor:'#E5E7E9',
+    borderColor:'#C5C7BD',
+    padding:8,
+    color:'#4D5656'
   },
   imageContainer: {
     flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    
   },
   receiptContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 10,
   },
   image: {
-    width: 200,
+    width: 210,
     height: 200,
-    borderRadius: 15,
+    borderBottomLeftRadius: 5,  // Alakulman pyöristys
+    borderBottomRightRadius: 5, // Alakulman pyöristys
+    borderTopLeftRadius: 8,      // Yläkulman pyöristys
+    borderTopRightRadius: 8, 
+    marginBottom:8,
+    borderWidth:1,
+    borderColor:'#85929E'
   },
   noCategoryContainer: {
     flex: 1,
@@ -173,6 +188,18 @@ const styles = StyleSheet.create({
   noCategoryText: {
     fontSize: 18,
   },
+  testi:{
+    borderWidth:1.7,
+    borderRadius:10,
+    marginBottom:10,
+    backgroundColor: '#D5DBDB',
+    borderColor:'#85929E'
+  },
+  receiptText:{
+    fontSize:16,
+    color:'#4D5656',
+    marginLeft:3,
+  }
 });
 
 export default MenuList;
