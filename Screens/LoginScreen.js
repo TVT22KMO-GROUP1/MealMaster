@@ -25,7 +25,7 @@ const LoginScreen = () => {
         .then((userCredential) => {
           console.log(userCredential.user);
           setLoginSuccess(true);
-          navigation.navigate('Home');
+          //navigation.navigate('Home');
         })
         .catch((error) => {
           if (error.code === 'auth/wrong-password' || error.code === 'auth/invalid-login-credentials') {

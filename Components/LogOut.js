@@ -12,7 +12,7 @@ const LogOut = ({ onPress }) => {
     auth
       .signOut()
       .then(() => {
-        navigation.navigate('Login');
+        //navigation.navigate('Login');
       })
       .catch((error) => alert(error.message));
   };

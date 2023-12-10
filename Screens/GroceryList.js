@@ -1,6 +1,6 @@
 //GroceryList.js
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, Button, FlatList } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Button, FlatList, Alert } from 'react-native';
 import { CheckBox } from 'react-native-elements';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useGroceryList } from '../Components/GroceryListContext';
@@ -41,16 +41,6 @@ const GroceryList = () => {
     }
   };
 
-  //Poista kaikki raaka-aineet listalta
-  const handleRemoveAllIngredients = async () => {
-    try {
-      await updateGroceryList({});
-      setSelectedIngredients({});
-    } catch (error) {
-      console.error('Virhe kaikkien raaka-aineiden poistamisessa:', error.message);
-    }
-  };
-
   //Haetaan groceryItems
   const fetchGroceryList = async () => {
     try {
@@ -66,33 +56,58 @@ const GroceryList = () => {
     }
   };
 
+  const handleRemoveAllIngredients = () => {
+    Alert.alert(
+      'Poistetaanko kaikki?',
+      '',
+      [
+        {
+          text: 'Ei',
+          style: 'cancel',
+        },
+        {
+          text: 'Kyllä',
+          onPress: async () => {
+            try {
+              await updateGroceryList({});
+              setSelectedIngredients({});
+            } catch (error) {
+              console.error('Virhe kaikkien raaka-aineiden poistamisessa:', error.message);
+            }
+          },
+        },
+      ],
+      { cancelable: false }
+    );
+  };
+
   return (
-  <View style={styles.container}>
-    <Text style={styles.headerText}>Ostoslista</Text>
-    {Object.keys(groceryItems).length === 0 ? (
-      <Text>Ostoslistasi on tyhjä</Text>
-    ) : (
-      <>
-        <ScrollView>		
-          {Object.entries(groceryItems).map(([ingredient, amount], index) => (
-            <View key={index} style={styles.itemContainer}>			
-              <View style={styles.rowContainer}>	  
-                <Text key={ingredient}>{`${amount}`}</Text>		
-                <CheckBox
-                  checked={selectedIngredients[ingredient]}
-                  onPress={() => handleCheckboxToggle(ingredient)}
-                />
+    <View style={styles.container}>
+      <Text style={styles.headerText}>Ostoslista</Text>
+      {Object.keys(groceryItems).length === 0 ? (
+        <Text>Ostoslistasi on tyhjä</Text>
+      ) : (
+        <>
+          <ScrollView>
+            {Object.entries(groceryItems).map(([ingredient, amount], index) => (
+              <View key={index} style={styles.itemContainer}>
+                <View style={styles.rowContainer}>
+                  <Text key={ingredient}>{`${amount}`}</Text>
+                  <CheckBox
+                    checked={selectedIngredients[ingredient]}
+                    onPress={() => handleCheckboxToggle(ingredient)}
+                  />
+                </View>
               </View>
-            </View>
-          ))}
-        </ScrollView>	
-        <Button title="Poista valitut" onPress={handleRemoveSelectedIngredients} />
-        <View style={{ marginVertical: 10 }} />
-        <Button title="Poista kaikki" onPress={handleRemoveAllIngredients} />
-      </>
-    )}
-  </View>
-);
+            ))}
+          </ScrollView>
+          <Button title="Poista valitut" onPress={handleRemoveSelectedIngredients} />
+          <View style={{ marginVertical: 10 }} />
+          <Button title="Poista kaikki" onPress={handleRemoveAllIngredients} />
+        </>
+      )}
+    </View>
+  );
 };
 
 export default GroceryList;
