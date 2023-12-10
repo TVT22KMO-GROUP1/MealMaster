@@ -68,6 +68,7 @@ const PlanMeal = ({ navigation}) => {
   return (
     <ScrollView>
       <View style={styles.container}>
+        <Text style={styles.headerText}>Ateriasuunnitelma</Text>
         {daysOfWeek.map((day, index) => (
           <View key={index} style={[styles.dayContainer, { flexGrow: 1, flexShrink: 1 }]}>
             <Text style={styles.dayText}>{day}</Text>
@@ -97,7 +98,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
-    marginTop: 20,
+    marginTop: 16,
     marginHorizontal: 10,
   },
   dayContainer: {
@@ -108,7 +109,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginTop: 8,
     marginBottom: 8,
-    borderRadius: 10,
+    borderRadius: 8,
+    borderColor: '#C5C7BD'
   },
   dayText: {
     fontSize: 18,
@@ -117,7 +119,7 @@ const styles = StyleSheet.create({
   },
   recipeText: {
     fontSize: 16,
-    width: '70%',
+    width: '73%',
   },
   recipeContainer: {
     marginTop: 10,
@@ -125,7 +127,8 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     borderRadius: 5,
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: '#D5DBDB',
+    
   },
   recipeInnerContainer: {
     flexDirection: 'row',
@@ -137,6 +140,19 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textDecorationLine: 'underline',
   },
+  headerText:{
+    fontSize: 24,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 20,
+    borderRadius: 6,
+    borderWidth:1,
+    overflow: 'hidden',
+    backgroundColor:'#E5E7E9',
+    borderColor:'#C5C7BD',
+    padding:8,
+    color:'#424949' 
+  }
 });
 
 export default PlanMeal;

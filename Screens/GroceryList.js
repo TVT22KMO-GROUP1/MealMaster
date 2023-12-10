@@ -104,8 +104,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   headerText: {
-    fontSize: 30,
-    margin: 20,
+    fontSize: 24,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginTop:16,
+    marginBottom: 16,
+    borderRadius: 5,
+    borderWidth:1,
+    overflow: 'hidden',
+    backgroundColor:'#E5E7E9',
+    borderColor:'#C5C7BD',
+    padding:8,
+    color:'#424949' 
   },
   itemContainer: {
     padding: 10,

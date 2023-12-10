@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Button, Image, } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Button, Image, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/core'
 import {Picker} from '@react-native-picker/picker';
 import { database, auth,  } from '../firebase';
@@ -147,11 +147,12 @@ const addToGroceryList = async () => {
         <View style={styles.ingredientsContainer}>
           <View>{ingredientList}</View>
         </View>
+        <View style={styles.instructionContainer}>
         {instructions.map((instruction, index) => (
           <Text style={styles.instructionsText} key={index}>
             {instruction}
-          </Text>
-        ))}
+          </Text> ))}
+        </View>
           <Picker
           selectedValue={selectedDay}
           onValueChange={(itemValue) => setSelectedDay(itemValue)}
@@ -160,9 +161,13 @@ const addToGroceryList = async () => {
           <Picker.Item key={index} label={day} value={day} />
           ))}
         </Picker>
-        <Button style={styles.button} title="Lisää viikkotaulukkoon" onPress={addToMealPlan} />
+        <TouchableOpacity style={styles.button}  onPress={addToMealPlan}>
+          <Text style={styles.buttonText}>LISÄÄ ATERIASUUNNITELMAAN</Text>
+          </TouchableOpacity>
         <View style={{ marginVertical: 10 }} />
-        <Button title="Lisää Ostoslistaan" onPress={addToGroceryList} />      
+        <TouchableOpacity style={styles.button} title="Lisää Ostoslistaan" onPress={addToGroceryList} >
+        <Text style={styles.buttonText}>LISÄÄ OSTOSLISTAAN</Text>
+          </TouchableOpacity>      
       </View>
     </ScrollView>
   );
@@ -176,20 +181,20 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     marginLeft:8,
     marginRight:8,
+    
   },
   headerText: {
-    fontSize: 36,
-    marginBottom: 8,
-    marginTop: 8,
+    fontSize: 24,
+    fontWeight: 'bold',
     textAlign: 'center',
-    borderWidth: 2,
-    borderColor: 'lightgray',
-    padding: 10,
+    marginBottom: 20,
     borderRadius: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
+    borderWidth:1,
+    overflow: 'hidden',
+    backgroundColor:'#E5E7E9',
+    borderColor:'#C5C7BD',
+    padding:8,
+    color:'#424949' 
   },
   instructionsText: {
     fontSize: 18,
@@ -204,39 +209,59 @@ const styles = StyleSheet.create({
     borderColor: 'lightgray',
     paddingVertical: 10,
     color: '#444', 
+    marginLeft:4,
+    
   },
   ingredientsContainer: {
     flexDirection: 'column',
     justifyContent: 'space-between',
-    borderBottomWidth: 1,
     borderColor: 'lightgray',
     paddingVertical: 10,
+    borderWidth:2,
+    borderRadius: 5,
+    borderColor:'#C5C7BD'
   },
   picker: {
-    height: 50,
+    height: 40,
     width: '100%',
     marginBottom: 16,
     marginTop: 16,
-    borderColor: '#ddd', 
     borderWidth: 1,
-    borderRadius: 8,
-    backgroundColor: '#f9f9f9', 
+    borderRadius: 5,
+    backgroundColor:'#E5E7E9',
+    borderColor:'#C5C7BD',
   },
   recipeImage: {
-    width: '100%',
+    width: 300,
     height: 300,
     resizeMode: 'cover',
     borderRadius: 8,
+    marginLeft:24,
     marginBottom: 16,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 4,
+    borderWidth:1.5,
+    borderColor:'#D1D3C8'
   },
   button: {
-    marginBottom: 16,
-    backgroundColor: '#4CAF50', // Vihreä taustaväri
     padding: 12,
-    borderRadius: 8,
+    borderRadius: 5,
+    borderWidth:1,
+    backgroundColor:'#D5DBDB',
+    borderColor:'#C5C7BD',
+ 
   },
+  buttonText:{
+    fontSize: 14,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  instructionContainer:{
+    borderWidth:2,
+    borderRadius: 5,
+    marginTop:8,
+    borderColor:'#C5C7BD'
+  }
 })
