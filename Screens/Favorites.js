@@ -1,61 +1,79 @@
+// Tuodaan tarvittavat React Native -komponentit ja Firebase-kirjastot
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/core';
-import { auth, database, ref, remove } from '../firebase'; 
+import { auth, database, ref, remove } from '../firebase';  
 import { onValue } from 'firebase/database';
 
+// Suosikit-komponentti
 const Favorites = ({}) => {
   const navigation = useNavigation();
+  // State suosikkiresepteille
   const [favoriteRecipes, setFavoriteRecipes] = useState({});
 
+  // useEffect-hook, joka ajetaan komponentin ensimmäisen renderöinnin jälkeen
   useEffect(() => {
+    // Haetaan käyttäjäobjekti
     const user = auth.currentUser;
 
+    // Tarkistetaan, onko käyttäjä kirjautunut sisään
     if (!user) {
       console.log('User is not logged in.');
       return;
     }
 
+    // Muodostetaan käyttäjän sähköpostista polku tietokantaan
     const userEmail = user.email;
     const sanitizedEmail = userEmail.replace(/\./g, '_');
     const favoritesPath = `kayttajat/${sanitizedEmail}/suosikit`;
 
+    // Muodostetaan polku kaikkiin suosikkeihin
     const allFavoritesPath = `${favoritesPath}`;
 
+    // Luodaan "unsubscribe"-funktio, joka suoritetaan komponentin purkautuessa
     const unsubscribe = onValue(ref(database, allFavoritesPath), (snapshot) => {
+      // Haetaan tietokannasta saatu data
       const data = snapshot.val();
       console.log('Data from Firebase (Favorites):', data);
+      // Päivitetään suosikkireseptien tila
       setFavoriteRecipes(data || {});
     });
 
+    // Palautetaan "unsubscribe"-funktion suorittava funktio
     return () => unsubscribe();
   }, []);
 
-  //siirtyminen reseptinäkymään jos ateriaa painetaan
+  // Funktio reseptin painalluksen käsittelyyn ja siirtymiseen reseptin näkymään
   const handleRecipePress = (receiptName, kuva) => {
     if (receiptName) {
       const selectedRecipe = favoriteRecipes[receiptName];
       const { kategoria, reseptiNimi, kuva } = selectedRecipe;
+      // Navigoidaan reseptin näkymään ja välitetään tarvittavat tiedot
       navigation.navigate('Recipe', { selectedCategory: kategoria, receiptName: reseptiNimi, imageUri: kuva });
     }
   };
 
+  // Funktio reseptin poistamiseen suosikeista
   const handleRemoveFromFavorites = (receiptName) => {
     const user = auth.currentUser;
 
+    // Tarkistetaan, onko käyttäjä kirjautunut sisään
     if (!user) {
       console.log('User is not logged in.');
       return;
     }
 
+    // Muodostetaan käyttäjän sähköpostista polku tietokantaan
     const userEmail = user.email;
     const sanitizedEmail = userEmail.replace(/\./g, '_');
     const favoritesPath = `kayttajat/${sanitizedEmail}/suosikit`;
     const recipePath = `${favoritesPath}/${receiptName}`;
 
+    // Poistetaan resepti suosikeista
     remove(ref(database, recipePath))
       .then(() => {
         console.log('Recipe removed from favorites successfully.');
+        // Päivitetään suosikkireseptien tila poistetun reseptin osalta
         setFavoriteRecipes((prevFavorites) => {
           const newFavorites = { ...prevFavorites };
           delete newFavorites[receiptName];
@@ -67,6 +85,7 @@ const Favorites = ({}) => {
       });
   };
 
+  // Renderöidään komponentti
   return (
     <View style={styles.container}>
       <Text style={styles.headerText}>Suosikit</Text>
@@ -97,7 +116,7 @@ const Favorites = ({}) => {
   );
 };
 
-
+// Tyylit komponenteille
 const styles = StyleSheet.create({
   container: {
     flex: 1,
