@@ -64,6 +64,7 @@ const MenuList = () => {
     }
   };
 
+  
   const toggleFavorite = async (receiptName) => {
     const user = auth.currentUser
 

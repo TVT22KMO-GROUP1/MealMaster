@@ -1,4 +1,3 @@
-// Components/LogOut.js
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -12,7 +11,6 @@ const LogOut = ({ onPress }) => {
     auth
       .signOut()
       .then(() => {
-        //navigation.navigate('Login');
       })
       .catch((error) => alert(error.message));
   };
