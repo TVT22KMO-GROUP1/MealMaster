@@ -1,4 +1,3 @@
-// Components/TabNavigatorIcons.js
 import React from 'react';
 import { MaterialIcons } from '@expo/vector-icons';
 
@@ -11,7 +10,7 @@ const TabNavigatorIcons = ({ route, focused, color, size }) => {
   };
 
   const routeName = route?.name || '';
-  const iconName = iconMap[routeName] || 'home'; // Default to home if no matching icon found
+  const iconName = iconMap[routeName] || 'home';
 
   return <MaterialIcons name={iconName} size={size} color={color} />;
 };

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/core';
-import { auth, database, ref, remove } from '../firebase';  // Update this import statement
+import { auth, database, ref, remove } from '../firebase'; 
 import { onValue } from 'firebase/database';
 
 const Favorites = ({}) => {
@@ -31,6 +31,7 @@ const Favorites = ({}) => {
     return () => unsubscribe();
   }, []);
 
+  //siirtyminen reseptinäkymään jos ateriaa painetaan
   const handleRecipePress = (receiptName, kuva) => {
     if (receiptName) {
       const selectedRecipe = favoriteRecipes[receiptName];

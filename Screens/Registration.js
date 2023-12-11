@@ -2,15 +2,17 @@ import React, { useState } from 'react';
 import { KeyboardAvoidingView, View, Text, TextInput, StyleSheet, TouchableOpacity, Platform } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
+import { useNavigation } from '@react-navigation/core';
 
-export default function Registration({ navigation }) {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [error, setError] = useState(null);
-  const [registrationSuccess, setRegistrationSuccess] = useState(false);
+const Registration = () => {
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [error, setError] = useState(null)
+  const [registrationSuccess, setRegistrationSuccess] = useState(false)
 
-  const auth = getAuth();
+  const navigation = useNavigation()
+  const auth = getAuth()
 
   //tarkistetaan sisältääkö sähköposti emojeita
   const containsEmoji = (text) => {
@@ -45,7 +47,6 @@ export default function Registration({ navigation }) {
     else {
       createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
-          console.log('User registered with:', userCredential.user.email)
           setRegistrationSuccess(true)
         })
         .catch((error) => {
@@ -59,7 +60,7 @@ export default function Registration({ navigation }) {
             setError('Sähköposti on jo käytössä')
           }
           else {
-            console.log(error.code + ' ' + error.message)
+            setError('Jokin meni pieleen, yritä uudelleen')
           }
           //virheilmoitus näkyy 4 sekuntia
           setTimeout(() => {
@@ -68,6 +69,7 @@ export default function Registration({ navigation }) {
         });
     }
   };
+  
 
   return (
     <KeyboardAvoidingView style={styles.container}>
@@ -115,7 +117,9 @@ export default function Registration({ navigation }) {
       )}
     </KeyboardAvoidingView>
   );
-}
+};
+
+export default Registration;
 
 const styles = StyleSheet.create({
   container: {
