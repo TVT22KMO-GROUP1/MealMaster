@@ -6,9 +6,12 @@ import { auth, database } from '../firebase';
 import { ref, update, onValue, remove } from 'firebase/database';
 
 const MenuList = () => {
+  // React Navigationin hookit
   const navigation = useNavigation()
   const route = useRoute()
+  // Haetaan valittu kategoria reittiparametreista
   const { selectedCategory } = route.params || { selectedCategory: null }
+  // Tila reseptidatan ja suosikkien hallintaan
   const [menuData, setMenuData] = useState(null)
   const [selectedRecipes, setSelectedRecipes] = useState([])
   const [isFavorite, setIsFavorite] = useState({})
@@ -33,6 +36,7 @@ const MenuList = () => {
   }, [selectedCategory])
 
 
+  // Käyttäjän suosikkireseptien haku Firebasesta
   useEffect(() => {
     const user = auth.currentUser
 
@@ -64,7 +68,7 @@ const MenuList = () => {
     }
   };
 
-  
+  // Suosikki-tilan vaihtaminen
   const toggleFavorite = async (receiptName) => {
     const user = auth.currentUser
 
@@ -79,6 +83,7 @@ const MenuList = () => {
     const recipePath = `${favoritesPath}/${receiptName}`
 
     if (isFavorite[receiptName]) {
+      // Poista resepti suosikeista
       remove(ref(database, recipePath))
         .then(() => {
           console.log('Recipe removed from favorites successfully.')
@@ -93,6 +98,7 @@ const MenuList = () => {
           console.error('Error removing recipe from favorites:', error.message)
         });
     } else {
+      // Lisää resepti suosikkeihin
       const favoriteData = {
         reseptiNimi: receiptName,
         kuva: menuData.Reseptit[receiptName].Kuva,
