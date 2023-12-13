@@ -21,6 +21,7 @@ LogBox.ignoreAllLogs();
 const Stack = createNativeStackNavigator();
 const Tab = createMaterialBottomTabNavigator();
 
+// Stack navigatorin asetukset
 const stackScreenOptions = () => {
   const userEmail = auth.currentUser?.email || 'Guest';
 
@@ -31,12 +32,14 @@ const stackScreenOptions = () => {
   };
 };
 
+// Tab navigatorin asetukset
 const tabScreenOptions = ({ route }) => ({
   tabBarIcon: ({ focused, color, size }) => (
     <TabNavigatorIcons route={route} focused={focused} color={color} size={24} />
   ),
 });
 
+// Stack navigatorin sisältö
 function AuthenticatedStack({ selectedRecipes }) {
   return (
     <Stack.Navigator screenOptions={stackScreenOptions}>
@@ -49,7 +52,9 @@ function AuthenticatedStack({ selectedRecipes }) {
     </Stack.Navigator>
   );
 }
-function AuthenticatedNavigator({ selectedRecipes }) {
+
+// Tab navigatorin sisältö
+function AuthenticatedNavigator({ selectedRecipes }) {  
   return (
     <Tab.Navigator screenOptions={tabScreenOptions}>
       <Tab.Screen name="Koti">
@@ -66,6 +71,7 @@ export default function App() {
   const [selectedRecipes, setSelectedRecipes] = useState([]);
   const [userLoggedIn, setUserLoggedIn] = useState(false);
 
+  // Tarkistetaan onko käyttäjä kirjautunut sisään
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       setUserLoggedIn(!!user);
@@ -74,10 +80,12 @@ export default function App() {
     return unsubscribe;
   }, []);
 
+  // AuthenticatedScreens sisältää sovelluksen päänäkymän
   const AuthenticatedScreens = (
     <AuthenticatedNavigator selectedRecipes={selectedRecipes} />
   );
 
+  // UnauthenticatedScreens sisältää kirjautumis- ja rekisteröitymissivut
   const UnauthenticatedScreens = (
     <Stack.Navigator initialRouteName="Login">
       <Stack.Screen

@@ -1,12 +1,14 @@
 //GroceryList.js
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, Button, FlatList, Alert, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, Alert, TouchableOpacity } from 'react-native';
 import { CheckBox } from 'react-native-elements';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useGroceryList } from '../Components/GroceryListContext';
 import { useFocusEffect } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const GroceryList = () => {
+  
+  //Haetaan groceryItems ja updateGroceryList GroceryListContextista
   const { groceryItems, updateGroceryList } = useGroceryList();
   const [selectedIngredients, setSelectedIngredients] = useState({});
 
@@ -17,31 +19,7 @@ const GroceryList = () => {
     }, [])
   );
 
-  //Checkboxin valinta
-  const handleCheckboxToggle = (ingredient) => {
-    setSelectedIngredients((prevSelectedIngredients) => ({
-      ...prevSelectedIngredients,
-      [ingredient]: !prevSelectedIngredients[ingredient],
-    }));
-  };
-
-  //Raaka-aineiden poisto listalta ja puhelimen muistilta
-  const handleRemoveSelectedIngredients = async () => {
-    try {
-      const filteredGroceryItems = Object.fromEntries(
-        Object.entries(groceryItems).filter(
-          ([ingredient]) => !selectedIngredients[ingredient]
-        )
-      );
-      console.log("filteredGroceryItems ostoslistalle jää: ",filteredGroceryItems)
-      await updateGroceryList(filteredGroceryItems);      
-      setSelectedIngredients({});
-    } catch (error) {
-      console.error('Virhe valittujen raaka-aineiden poistamisessa:', error.message);
-    }
-  };
-
-  //Haetaan groceryItems
+  //Haetaan groceryItems muistiin tallennetuista raaka-aineista
   const fetchGroceryList = async () => {
     try {
       const ingredientsString = await AsyncStorage.getItem('groceryList');
@@ -56,6 +34,30 @@ const GroceryList = () => {
     }
   };
 
+  //Checkboxin valinta
+  const handleCheckboxToggle = (ingredient) => {
+    setSelectedIngredients((prevSelectedIngredients) => ({
+      ...prevSelectedIngredients,
+      [ingredient]: !prevSelectedIngredients[ingredient],
+    }));
+  };
+
+  //Valittujen raaka-aineiden poisto listalta ja puhelimen muistilta
+  const handleRemoveSelectedIngredients = async () => {
+    try {
+      const filteredGroceryItems = Object.fromEntries(
+        Object.entries(groceryItems).filter(
+          ([ingredient]) => !selectedIngredients[ingredient]
+        )
+      );
+      await updateGroceryList(filteredGroceryItems);      
+      setSelectedIngredients({});
+    } catch (error) {
+      console.error('Virhe valittujen raaka-aineiden poistamisessa:', error.message);
+    }
+  };
+
+  //Poistetaan kaikki raaka-aineet listalta ja puhelimen muistista
   const handleRemoveAllIngredients = () => {
     Alert.alert(
       'Poistetaanko kaikki?',
