@@ -8,7 +8,7 @@ const GroceryListContext = createContext();
 export const GroceryListProvider = ({ children }) => {
   const [groceryItems, setGroceryItems] = useState([]);
 
-  //Funktio, joka hakee ostoslistan puhelimen muistista ja päivittää groceryItems tilan 
+  //Haetaan ostoslista puhelimen muistista
   const fetchGroceryList = async () => {
     try {
       const ingredientsString = await AsyncStorage.getItem('groceryList');

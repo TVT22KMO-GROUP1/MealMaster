@@ -3,10 +3,10 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View, Image, ScrollView } from 'react-native';
 
 const HomeScreen = () => {
-  const [categories, setCategories] = useState([]);
   const [categoryData, setCategoryData] = useState(null);
   const navigation = useNavigation();
 
+  // Haetaan kategoriat tietokannasta
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -14,24 +14,19 @@ const HomeScreen = () => {
         const response = await fetch(url);
         const data = await response.json();
         setCategoryData(data);
-
-        // Suodatetaan kategorianimet... Onko turha???
-        const categoryArray = data ? Object.keys(data).map(category => category) : [];
-        setCategories(categoryArray);
       } catch (error) {
         console.error('Error fetching data', error);
       }
-      console.log('kategoriat ', categories);
     };
-
     fetchData();
   }, []);
 
+  // Asetetaan kategoriat taulukkoon
   const categoryNames = categoryData ? Object.keys(categoryData) : [];
 
+  // Navigoidaan valittuun kategoriaan
   const navigateToMenuList = (selectedCategory) => {
     navigation.navigate('Menu', { selectedCategory });
-    console.log('selected category (HomeSreen) ', { selectedCategory });
   };
 
   return (

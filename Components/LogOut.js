@@ -1,11 +1,10 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/core';
 import { auth } from '../firebase';
 
+// Kirjautumisnäkymän uloskirjautumisnappi
 const LogOut = ({ onPress }) => {
-  const navigation = useNavigation();
 
   const handleSignOut = () => {
     auth
