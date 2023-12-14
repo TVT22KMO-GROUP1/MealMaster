@@ -9,9 +9,7 @@ import { useGroceryList } from '../Components/GroceryListContext';
 import { Alert } from 'react-native';
 
 const Recipe = ({ route }) => {
-  const { receiptName } = route.params;
-  const { selectedCategory } = route.params;
-  const { imageUri } = route.params;
+  const { receiptName, selectedCategory, imageUri } = route.params;
   const navigation = useNavigation();
   const [ingredients, setIngredients] = useState([]);
   const [instructions, setInstructions] = useState([]);
@@ -19,7 +17,7 @@ const Recipe = ({ route }) => {
   const { updateGroceryList } = useGroceryList();
 
 
-
+//Käytetään ateriasuunnitelmaan lisäykseen
   const [mealPlan, setMealPlan] = useState({ 
     Maanantai: [],
     Tiistai: [],
@@ -29,6 +27,7 @@ const Recipe = ({ route }) => {
     Lauantai: [],
     Sunnuntai: []
   });
+  //Valikon päivävaihtoehdot
   const dayOptions = [
     'Maanantai',
     'Tiistai',
@@ -54,15 +53,12 @@ const Recipe = ({ route }) => {
           const response = await fetch(url);
           const data = await response.json();
           setIngredients(data);
-          //console.log(url);
-          //console.log('Fetched ingredients data:', data);
 
           const instructionsUrl = `https://meal-base-99bc5-default-rtdb.firebaseio.com/Kategoriat/${selectedCategory}/Reseptit/${receiptName}/Ohje.json`;
           const instructionsResponse = await fetch(instructionsUrl);
           const instructionsData = await instructionsResponse.json();
           setInstructions(instructionsData);
-          //console.log(instructionsUrl);
-          //console.log('Fetched guide data:', instructionsData);
+
         } else {
           console.warn('No category or receipt name selected.');
         }
@@ -74,7 +70,7 @@ const Recipe = ({ route }) => {
     fetchRecipeData();
   }, [receiptName, selectedCategory]);
 
-
+//Lisätään resepti tietokannassa olevaan ateriasuunnitelmaan 
   const addToMealPlan = () => {
     const user = auth.currentUser;
   
@@ -84,16 +80,17 @@ const Recipe = ({ route }) => {
     }
   
     const userEmail = user.email;
-    const sanitizedEmail = userEmail.replace(/\./g, '_');
+    const sanitizedEmail = userEmail.replace(/\./g, '_'); //Vaihdetaan s.postin osoitteesta piste alaviivaksi. 
     const mealPlanPath = `kayttajat/${sanitizedEmail}/ateriasuunnitelma`;
     const dayPath = `${mealPlanPath}/${selectedDay}`;
     const recipePath = `${dayPath}/${receiptName}`;
+    //Tallennetaan tietokantaa, reseptin nimi, kategoria ja kuva
     const mealPlanData = {
       reseptiNimi: receiptName,
       kategoria: selectedCategory,
       imageUri: imageUri,
     };
-  
+  //Päivitetään ateriasuunnitelma
     update(ref(database, recipePath), mealPlanData)
     .then(() => {
       setMealPlan((prevMealPlan) => {
@@ -101,17 +98,13 @@ const Recipe = ({ route }) => {
         updatedMealPlan[selectedDay].push(receiptName);
         return updatedMealPlan;
       });
-
       console.log('Tiedot tallennettu onnistuneesti.');
       Alert.alert('Ateriasuunnitelma päivitetty', 'Ateria lisätty ateriasuunnitelmaan.');
-      //navigation.navigate('MealPlan', { mealPlan }); 
     })
     .catch((error) => {
       console.error('Virhe tiedon tallentamisessa:', error.message);
     });
 };  
-//console.log('Params in Recipe:', receiptName, selectedCategory, imageUri, selectedDay);
-
 
 //Lisää/päivittää tuotteet ostoslistaan. Käytetään puhelimen muistia 
 const addToGroceryList = async () => {
@@ -165,7 +158,7 @@ const addToGroceryList = async () => {
           <Text style={styles.buttonText}>LISÄÄ ATERIASUUNNITELMAAN</Text>
           </TouchableOpacity>
         <View style={{ marginVertical: 10 }} />
-        <TouchableOpacity style={styles.button} title="Lisää Ostoslistaan" onPress={addToGroceryList} >
+        <TouchableOpacity style={styles.button}  onPress={addToGroceryList} >
         <Text style={styles.buttonText}>LISÄÄ OSTOSLISTAAN</Text>
           </TouchableOpacity>      
       </View>
@@ -209,7 +202,6 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     color: '#444', 
     marginLeft:4,
-    
   },
   ingredientsContainer: {
     flexDirection: 'column',
@@ -250,7 +242,6 @@ const styles = StyleSheet.create({
     borderWidth:1,
     backgroundColor:'#D5DBDB',
     borderColor:'#C5C7BD',
- 
   },
   buttonText:{
     fontSize: 14,

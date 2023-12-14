@@ -179,9 +179,9 @@ const styles = StyleSheet.create({
   image: {
     width: 210,
     height: 200,
-    borderBottomLeftRadius: 5,  // Alakulman pyöristys
-    borderBottomRightRadius: 5, // Alakulman pyöristys
-    borderTopLeftRadius: 8,      // Yläkulman pyöristys
+    borderBottomLeftRadius: 5,  
+    borderBottomRightRadius: 5, 
+    borderTopLeftRadius: 8,      
     borderTopRightRadius: 8, 
     marginBottom:8,
     borderWidth:1,

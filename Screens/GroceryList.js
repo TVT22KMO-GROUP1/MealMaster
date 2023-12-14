@@ -151,7 +151,6 @@ const styles = StyleSheet.create({
   scrollViewcontainer: {
     flex: 1,
     width: '100%',
-    
   },
   itemText: {
     fontSize: 16,
@@ -168,7 +167,6 @@ const styles = StyleSheet.create({
     backgroundColor:'#D5DBDB',
     borderColor:'#C5C7BD',
     width: '80%'
- 
   },
   buttonText:{
     fontSize: 14,
