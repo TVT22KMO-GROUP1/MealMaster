@@ -5,8 +5,17 @@ import { database, auth, remove } from '../firebase';
 
 const PlanMeal = ({ navigation}) => {
   const [mealPlan, setMealPlan] = useState({});
-  const daysOfWeek = ['Maanantai', 'Tiistai', 'Keskiviikko', 'Torstai', 'Perjantai', 'Lauantai', 'Sunnuntai'];
+  
+  const daysOfWeek = 
+  ['Maanantai',
+   'Tiistai',
+   'Keskiviikko', 
+   'Torstai',
+   'Perjantai', 
+   'Lauantai', 
+   'Sunnuntai'];
 
+  //Haetaan tietokannasta kaikki suunnitellut ateriat
   useEffect(() => {
     const user = auth.currentUser;
 
@@ -29,7 +38,7 @@ const PlanMeal = ({ navigation}) => {
   }, []); 
 
 
-
+//Aterian poistaminen ateriasuunnitelmasta
   const removeMealForRecipe = (day, recipeName) => {
     const user = auth.currentUser;
 
@@ -51,19 +60,16 @@ const PlanMeal = ({ navigation}) => {
       });
   };
 
-
+//Navigointi recipe-sivulle tarvittavien tietojen kanssa
   const handleMealPress = (day, recipeName) => {
     if (recipeName) {
       const selectedRecipe = mealPlan[day][recipeName];
       const { kategoria, reseptiNimi, imageUri } = selectedRecipe;
       console.log('Selected Recipe:', selectedRecipe);
-  
-      // Navigoi Recipe-sivulle ja välitä tarvittavat tiedot
+
       navigation.navigate('Recipe', { selectedCategory: kategoria, receiptName: reseptiNimi, imageUri: imageUri, selectedDay: day });
     }
   };
-  
- 
 
   return (
     <ScrollView>
@@ -128,7 +134,6 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     borderWidth: 1,
     borderColor: '#D5DBDB',
-    
   },
   recipeInnerContainer: {
     flexDirection: 'row',

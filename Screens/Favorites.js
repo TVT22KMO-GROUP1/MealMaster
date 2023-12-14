@@ -148,9 +148,9 @@ const styles = StyleSheet.create({
     resizeMode: 'cover',
     borderWidth:1,
     borderColor:'#D5DBDB',
-    borderBottomLeftRadius: 5,  // Alakulman pyöristys
-    borderBottomRightRadius: 5, // Alakulman pyöristys
-    borderTopLeftRadius: 8,      // Yläkulman pyöristys
+    borderBottomLeftRadius: 5,  
+    borderBottomRightRadius: 5, 
+    borderTopLeftRadius: 8,      
     borderTopRightRadius: 8, 
     borderColor:'#85929E'
   },
@@ -175,10 +175,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#D5DBDB',
     borderColor:'#85929E'
   },
-  recipeItem:{
-    //width: '100%', 
-    
-  }
 });
 
 export default Favorites;
