@@ -1,17 +1,26 @@
+// React ja React Native -kirjastojen importit
 import React, { useState } from 'react';
 import { KeyboardAvoidingView, ImageBackground, StyleSheet, Text, TextInput, TouchableOpacity, View, Platform, StatusBar, SafeAreaView } from 'react-native';
+// React Navigation -kirjaston import
 import { useNavigation } from '@react-navigation/core';
+// Firebase Authentication -kirjaston importit
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 
+// Komponentin päälogiikka
 const LoginScreen = () => {
+  // Käyttäjän syöttämien tietojen tilat
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  // Kirjautumisen tilat
   const [loginSuccess, setLoginSuccess] = useState(false);
   const [error, setError] = useState(null);
 
+  // React Navigation -navigaatiohook
   const navigation = useNavigation();
+  // Firebase Authentication -instanssi
   const auth = getAuth();
 
+  // Kirjautumisen käsittely
   const handleLogin = () => {
     if (email === '' || password === '') {
       setError('Täytä kaikki kentät');
@@ -42,10 +51,12 @@ const LoginScreen = () => {
     }
   };
 
+  // Rekisteröitymissivulle siirtyminen
   const navigateToRegistration = () => {
     navigation.navigate('Registration')
   }
 
+  // Komponentin palauttama näkymä
   return (
     <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <StatusBar translucent backgroundColor="transparent" />
@@ -88,8 +99,10 @@ const LoginScreen = () => {
   );
 };
 
+// Komponentin export
 export default LoginScreen;
 
+// Tyylit komponentille
 const styles = StyleSheet.create({
   container: {
     flex: 1,
