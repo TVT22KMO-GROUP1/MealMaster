@@ -34,7 +34,7 @@ const HomeScreen = () => {
       <Text style={styles.headerText}>Valitse kategoria</Text>
       <ScrollView contentContainerStyle={styles.imageContainer}>
         {categoryNames.map((category, index) => (
-          <TouchableOpacity style={styles.testi} key={index} onPress={() => navigateToMenuList(category)}>
+          <TouchableOpacity style={styles.containerBox} key={index} onPress={() => navigateToMenuList(category)}>
             <View style={styles.categoryContainer}>
               <Image
                 source={{ uri: categoryData[category].Kuva }}
@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
     fontSize: 16,
   },
-  testi:{
+  containerBox:{
     borderWidth:1.7,
     borderRadius:10,
     marginBottom:10,

@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
   },
   dayContainer: {
-    borderWidth: 1,
+    borderWidth: 1.5,
     paddingVertical: 20,
     paddingHorizontal: 10,
     alignItems: 'center',
@@ -116,12 +116,19 @@ const styles = StyleSheet.create({
     marginTop: 8,
     marginBottom: 8,
     borderRadius: 8,
-    borderColor: '#C5C7BD'
+    borderColor: '#C5C7BD',
   },
   dayText: {
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 10,
+    borderRadius: 6,
+    borderWidth:1,
+    overflow: 'hidden',
+    backgroundColor:'#D5DBDB',
+    borderColor:'#C5C7BD',
+    width: '40%',
+    textAlign:'center'
   },
   recipeText: {
     fontSize: 16,

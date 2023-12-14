@@ -91,7 +91,7 @@ const Favorites = ({}) => {
       <Text style={styles.headerText}>Suosikit</Text>
       <ScrollView contentContainerStyle={styles.imageContainer}>
         {Object.keys(favoriteRecipes).map((receiptName, index) => (
-          <TouchableOpacity style={styles.testi} key={index} onPress={() => handleRecipePress(receiptName)}>
+          <TouchableOpacity style={styles.containerBox} key={index} onPress={() => handleRecipePress(receiptName)}>
             <View style={styles.recipeItem}>
               <Image
                 source={{ uri: favoriteRecipes[receiptName].kuva }}
@@ -140,14 +140,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-evenly'
-  
   },
   image: {
     width: 160,
     height: 120,
     resizeMode: 'cover',
     borderWidth:1,
-    borderColor:'#D5DBDB',
     borderBottomLeftRadius: 5,  
     borderBottomRightRadius: 5, 
     borderTopLeftRadius: 8,      
@@ -167,8 +165,9 @@ const styles = StyleSheet.create({
   removeButton: {
     color: 'red',
     fontSize: 16,
+    marginTop:8
   },
-  testi:{
+  containerBox:{
     borderWidth:1.7,
     borderRadius:10,
     marginBottom:10,

@@ -124,7 +124,7 @@ const MenuList = () => {
           <Text style={styles.headerText}>{selectedCategory}</Text>
           <ScrollView contentContainerStyle={styles.imageContainer}>
             {receiptNames.map((receiptName, index) => (
-              <TouchableOpacity style={styles.testi} key={index} onPress={() => handleReceiptPress(receiptName, menuData.Reseptit[receiptName].Kuva)}>
+              <TouchableOpacity style={styles.containerBox} key={index} onPress={() => handleReceiptPress(receiptName, menuData.Reseptit[receiptName].Kuva)}>
                 <Image source={{ uri: menuData.Reseptit[receiptName].Kuva }} style={styles.image} />
                 <View style={styles.receiptContainer}>
                   <Text style={styles.receiptText}>{receiptName}</Text>
@@ -195,7 +195,7 @@ const styles = StyleSheet.create({
   noCategoryText: {
     fontSize: 18,
   },
-  testi:{
+  containerBox:{
     borderWidth:1.7,
     borderRadius:10,
     marginBottom:10,

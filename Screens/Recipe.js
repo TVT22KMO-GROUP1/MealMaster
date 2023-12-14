@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Button, Image, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/core'
 import {Picker} from '@react-native-picker/picker';
 import { database, auth,  } from '../firebase';
@@ -230,7 +230,7 @@ const styles = StyleSheet.create({
     marginLeft:24,
     marginBottom: 16,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: 8, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 4,
     borderWidth:1.5,
